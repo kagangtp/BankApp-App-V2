@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <data name="ListFetched" xml:space="preserve">
+    <value>Items retrieved successfully</value>
+  </data>
+  <data name="CustomerAdded" xml:space="preserve">
+    <value>Customer has been added</value>
+  </data>
+  <data name="CustomersListed" xml:space="preserve">
+    <value>Customers listed.</value>
+  </data>
+  <data name="CustomerNotFound" xml:space="preserve">
+    <value>Customer not found.</value>
+  </data>
+  <data name="CustomerUpdated" xml:space="preserve">
+    <value>Customer updated successfully.</value>
+  </data>
+  <data name="CustomerDeleted" xml:space="preserve">
+    <value>Customer deleted successfully.</value>
+  </data>
+  <data name="DeleteError" xml:space="preserve">
+    <value>An error occurred while deleting the customer.</value>
+  </data>
+  <data name="ApiTitle" xml:space="preserve">
+    <value>IlkProjem API DEF</value>
+  </data>
+  <data name="ApiDescription" xml:space="preserve">
+    <value>IlkProjem API Description</value>
+  </data>
+</root>
