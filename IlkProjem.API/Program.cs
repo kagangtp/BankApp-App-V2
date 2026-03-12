@@ -22,9 +22,20 @@ using IlkProjem.DAL.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// --- 0. MERKEZİ BAĞLANTI AYARI (Kritik Düzeltme) ---
+// Bağlantı cümlesini 3 farklı yerden (Appsettings, Railway Değişkeni, Private URL) kontrol eder
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
+                      ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+                      ?? Environment.GetEnvironmentVariable("DATABASE_PRIVATE_URL");
+
+if (string.IsNullOrWhiteSpace(connectionString))
+{
+    // Eğer hala boşsa loglara uyarı basar ama sistemi hemen çökertmez (Serilog için)
+    Console.WriteLine("!!! UYARI: ConnectionString bulunamadı. Veritabanı işlemleri patlayabilir !!!");
+}
+
 // --- 1. LOCALIZATION SETUP ---
 builder.Services.AddLocalization();
-
 builder.Services.Configure<RequestLocalizationOptions>(options =>
 {
     var cultures = new[] { "en-US", "tr-TR" };
@@ -47,10 +58,10 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
-// --- 3. DATABASE & SERVICES ---
+// --- 3. DATABASE & AUTH ---
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 builder.Services.AddDbContext<AppDbContext>((sp, options) =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection"))
+    options.UseNpgsql(connectionString) // Yukarıda belirlediğimiz güvenli string
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
 var keyString = builder.Configuration["Jwt:Key"] ?? "fallback_secret_key_32_characters_long";
@@ -127,11 +138,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// --- 5. CORS (Vercel URL'ini buraya eklemeyi unutma!) ---
+// --- 5. CORS ---
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
-        policy => policy.WithOrigins("http://localhost:4200", "https://your-vercel-app.vercel.app") 
+        policy => policy.WithOrigins("http://localhost:4200", "https://your-app.vercel.app") 
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
@@ -141,7 +152,7 @@ builder.Services.AddCors(options =>
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
-    .WriteTo.PostgreSQL(builder.Configuration.GetConnectionString("DefaultConnection"), "ServiceLog")
+    .WriteTo.PostgreSQL(connectionString, "ServiceLog") // Merkezi string kullanıldı
     .CreateLogger();
 
 builder.Host.UseSerilog();
@@ -158,8 +169,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// --- 8. STATIC FILE SERVING (GÜVENLİ YOL OLUŞTURMA) ---
-// Sadece null değil, boş string gelme ihtimaline karşı kontrol eklendi
+// --- 8. STATIC FILE SERVING ---
 var configPath = builder.Configuration["FileSettings:StoragePath"];
 var storagePath = !string.IsNullOrWhiteSpace(configPath) 
     ? configPath 
@@ -190,8 +200,11 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     
-    // Railway'de tabloların otomatik oluşması için Migrate() eklendi
-    context.Database.Migrate();
+    // Bağlantı cümlesi varsa migration'ları basar
+    if (!string.IsNullOrWhiteSpace(connectionString))
+    {
+        context.Database.Migrate();
+    }
 
     if (!context.Customers.Any())
     {
@@ -202,7 +215,6 @@ using (var scope = app.Services.CreateScope())
 
 app.MapOpenApi();
 
-// --- 10. RAILWAY PORT AYARI ---
-// Sabit localhost yerine Railway'in verdiği PORT değişkenini okur
+// --- 10. RAILWAY PORT & RUN ---
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5005";
 app.Run($"http://0.0.0.0:{port}");
