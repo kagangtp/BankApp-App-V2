@@ -15,7 +15,7 @@ RUN dotnet restore "IlkProjem.API/IlkProjem.API.csproj"
 COPY . .
 
 # 4. Uygulamayı derle ve yayınla
-RUN dotnet publish "IlkProjem.API/IlkProjem.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "IlkProjem.API/IlkProjem.API.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:EnableDefaultEmbeddedResourceItems=false
 
 # ---- Runtime Stage ----
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
