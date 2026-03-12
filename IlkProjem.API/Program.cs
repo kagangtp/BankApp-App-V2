@@ -22,17 +22,22 @@ using IlkProjem.DAL.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 0. MERKEZİ BAĞLANTI AYARI (Kritik Düzeltme) ---
-// Bağlantı cümlesini 3 farklı yerden (Appsettings, Railway Değişkeni, Private URL) kontrol eder
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") 
-                      ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                      ?? Environment.GetEnvironmentVariable("DATABASE_PRIVATE_URL");
+// --- 0. BAĞLANTI CÜMLESİ TAMİRCİSİ (Format Hatasını Burası Çözer) ---
+var rawConnection = builder.Configuration.GetConnectionString("DefaultConnection") 
+                    ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
+                    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
+                    ?? Environment.GetEnvironmentVariable("DATABASE_PRIVATE_URL");
 
-if (string.IsNullOrWhiteSpace(connectionString))
+string connectionString = rawConnection ?? "";
+
+// Eğer adres postgres:// ile başlıyorsa (Railway URI), onu .NET formatına çevir
+if (!string.IsNullOrEmpty(rawConnection) && rawConnection.StartsWith("postgres"))
 {
-    // Eğer hala boşsa loglara uyarı basar ama sistemi hemen çökertmez (Serilog için)
-    Console.WriteLine("!!! UYARI: ConnectionString bulunamadı. Veritabanı işlemleri patlayabilir !!!");
+    var databaseUri = new Uri(rawConnection);
+    var userInfo = databaseUri.UserInfo.Split(':');
+    connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Prefer;Trust Server Certificate=true;";
 }
+// ------------------------------------------------------------------
 
 // --- 1. LOCALIZATION SETUP ---
 builder.Services.AddLocalization();
@@ -58,10 +63,10 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
-// --- 3. DATABASE & AUTH ---
+// --- 3. DATABASE & SERVICES ---
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 builder.Services.AddDbContext<AppDbContext>((sp, options) =>
-    options.UseNpgsql(connectionString) // Yukarıda belirlediğimiz güvenli string
+    options.UseNpgsql(connectionString) // Tamir edilmiş string kullanılıyor
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
 var keyString = builder.Configuration["Jwt:Key"] ?? "fallback_secret_key_32_characters_long";
@@ -142,17 +147,17 @@ builder.Services.AddControllers()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
-        policy => policy.WithOrigins("http://localhost:4200", "https://your-app.vercel.app") 
+        policy => policy.WithOrigins("http://localhost:4200", "https://your-vercel-app.vercel.app") 
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
 });
 
-// --- 6. SERILOG SETUP ---
+// --- 6. SERILOG ---
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
-    .WriteTo.PostgreSQL(connectionString, "ServiceLog") // Merkezi string kullanıldı
+    .WriteTo.PostgreSQL(connectionString, "ServiceLog") 
     .CreateLogger();
 
 builder.Host.UseSerilog();
@@ -200,7 +205,7 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     
-    // Bağlantı cümlesi varsa migration'ları basar
+    // Sadece bağlantı varsa çalışır
     if (!string.IsNullOrWhiteSpace(connectionString))
     {
         context.Database.Migrate();
@@ -215,6 +220,6 @@ using (var scope = app.Services.CreateScope())
 
 app.MapOpenApi();
 
-// --- 10. RAILWAY PORT & RUN ---
+// --- 10. RAILWAY PORT ---
 var port = Environment.GetEnvironmentVariable("PORT") ?? "5005";
 app.Run($"http://0.0.0.0:{port}");
