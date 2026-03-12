@@ -147,7 +147,7 @@ builder.Services.AddControllers()
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
-        policy => policy.WithOrigins("http://localhost:4200", "https://your-vercel-app.vercel.app") 
+        policy => policy.WithOrigins("http://localhost:4200", "https://bank-app-ui-v2.vercel.app") 
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
