@@ -1,0 +1,28 @@
+# .NET Derleme Klasörleri (EN KRİTİĞİ!)
+**/bin/
+**/obj/
+
+# Git Dosyaları
+.git/
+.gitignore
+
+# IDE ve Editör Dosyaları
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Mac Özel Dosyaları (M2 kullandığın için önemli)
+.DS_Store
+
+# Docker Dosyaları (Kendilerini kopyalamasına gerek yok)
+Dockerfile
+.dockerignore
+
+# Log Dosyaları
+*.log
+
+# Frontend (Eğer aynı repoda node_modules varsa)
+**/node_modules/
