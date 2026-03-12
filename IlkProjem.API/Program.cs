@@ -50,7 +50,7 @@ builder.Services.AddOpenApi(options =>
 // --- 3. DATABASE & SERVICES ---
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 builder.Services.AddDbContext<AppDbContext>((sp, options) =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection"))
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
 var keyString = builder.Configuration["Jwt:Key"] ?? "fallback_secret_key_32_characters_long";
