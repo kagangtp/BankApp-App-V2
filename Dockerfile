@@ -13,6 +13,8 @@ RUN dotnet restore "IlkProjem.API/IlkProjem.API.csproj"
 
 # 3. Kalan tüm dosyaları kopyala
 COPY . .
+# Dockerfile'da 'COPY . .' satırından hemen sonraya şunu ekle:
+RUN ls -R /src/IlkProjem.DAL
 
 # 4. Uygulamayı derle ve yayınla
 RUN dotnet publish "IlkProjem.API/IlkProjem.API.csproj" -c Release -o /app/publish /p:UseAppHost=false /p:EnableDefaultEmbeddedResourceItems=false
