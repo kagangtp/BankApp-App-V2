@@ -8,4 +8,11 @@ public interface ICalculatorService
     decimal Divide(decimal a, decimal b);
     Task<int> GetTotalAccountCountAsync();
     Task<decimal> GetTotalBalanceSumAsync();
+    Task<List<MonthlyRegistrationDto>> GetMonthlyRegistrationCountsAsync(int months = 6);
+}
+
+public class MonthlyRegistrationDto
+{
+    public string Month { get; set; } = string.Empty;
+    public int Count { get; set; }
 }

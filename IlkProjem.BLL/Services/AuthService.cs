@@ -171,15 +171,17 @@ public class AuthService : IAuthService
         var jwtKey = _configuration["Jwt:Key"] ?? throw new BusinessException(BusinessErrorCode.AuthJwtKeyMissing, "JWT Key is missing in configuration.");
         var key = Encoding.ASCII.GetBytes(jwtKey);
 
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Username),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role ?? "No Role")
+        };
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
-            Subject = new ClaimsIdentity(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.Username),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.Role ?? "No Role")
-            }),
+            Subject = new ClaimsIdentity(claims),
             Expires = expiresAt,
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
             Issuer = _configuration["Jwt:Issuer"],

@@ -43,4 +43,27 @@ public class CalculatorService : ICalculatorService
         return customers.Sum(c => c.Balance);
     }
 
+    // 4. Aylık Müşteri Kayıt Sayılarını Getirir
+    public async Task<List<MonthlyRegistrationDto>> GetMonthlyRegistrationCountsAsync(int months = 6)
+    {
+        var customers = await _customerRepository.GetAllAsync();
+        var now = DateTime.UtcNow;
+        var result = new List<MonthlyRegistrationDto>();
+
+        for (int i = months - 1; i >= 0; i--)
+        {
+            var date = now.AddMonths(-i);
+            var count = customers.Count(c => 
+                c.CreatedAt.Year == date.Year && c.CreatedAt.Month == date.Month);
+            
+            result.Add(new MonthlyRegistrationDto
+            {
+                Month = date.ToString("MMM yyyy"),
+                Count = count
+            });
+        }
+
+        return result;
+    }
+
 }

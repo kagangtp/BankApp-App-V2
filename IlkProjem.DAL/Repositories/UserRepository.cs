@@ -24,6 +24,18 @@ public class UserRepository : IUserRepository
     public async Task AddAsync(User user, CancellationToken ct = default) => 
         await _context.Users.AddAsync(user, ct);
 
+    public async Task<IEnumerable<User>> GetAllAsync(CancellationToken ct = default) =>
+        await _context.Users.ToListAsync(ct);
+
+    public async Task<User?> GetByIdAsync(int id, CancellationToken ct = default) =>
+        await _context.Users.FindAsync(new object[] { id }, ct);
+
+    public void Update(User user) => 
+        _context.Users.Update(user);
+
+    public void Delete(User user) => 
+        _context.Users.Remove(user);
+
     public async Task<bool> SaveChangesAsync(CancellationToken ct = default) => 
         await _context.SaveChangesAsync(ct) > 0;
 }

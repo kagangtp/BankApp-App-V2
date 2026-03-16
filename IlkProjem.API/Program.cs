@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using IlkProjem.DAL.Data;
 using IlkProjem.BLL.Services;
@@ -124,6 +124,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserService, UserService>(); // Added UserService
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<ICalculatorService, CalculatorService>();
 builder.Services.AddScoped<IExcelService, ExcelService>();
@@ -220,6 +221,13 @@ using (var scope = app.Services.CreateScope())
 
 app.MapOpenApi();
 
-// --- 10. RAILWAY PORT ---
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5005";
-app.Run($"http://0.0.0.0:{port}");
+// --- 10. APP RUN (RAILWAY & LOCAL) ---
+if (app.Environment.IsDevelopment())
+{
+    app.Run(); // Local development uses launchSettings.json (localhost:5005)
+}
+else
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "5005";
+    app.Run($"http://0.0.0.0:{port}");
+}

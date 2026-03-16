@@ -16,6 +16,9 @@ public enum BusinessErrorCode
     AuthJwtKeyMissing        = 1004, // GenerateJwtToken: appsettings'te JWT Key yok
     AuthRevokeTokenFailed    = 1005, // RevokeToken: Token bulunamadı veya zaten iptal
 
+    // ─── User Servis (11) ───────────────────────
+    UserNotFound             = 1101, // GetById / Update / Delete: Kullanıcı bulunamadı
+
     // ─── Customer Servis (20) ───────────────────
     CustomerNotFound         = 1201, // GetById / Update: Müşteri bulunamadı
     CustomerDeleteFailed     = 1202, // Delete: Silme işlemi başarısız

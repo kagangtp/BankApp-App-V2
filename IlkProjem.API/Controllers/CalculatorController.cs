@@ -69,5 +69,12 @@ public class CalculatorController : ControllerBase
         var total = await _calculatorService.GetTotalBalanceSumAsync();
         return Ok(new { TotalBalance = total });
     }
+
+    [HttpGet("monthly-registrations")]
+    public async Task<IActionResult> GetMonthlyRegistrations([FromQuery] int months = 6)
+    {
+        var data = await _calculatorService.GetMonthlyRegistrationCountsAsync(months);
+        return Ok(data);
+    }
     
 }
