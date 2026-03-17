@@ -21,15 +21,7 @@ public class CustomerController : ControllerBase
         _customerService = customerService;
         _excelService = excelService;
     }
-
-    // "Getir" - Tüm Liste
-    // [HttpGet] 
-    // public async Task<IActionResult> Get() 
-    // {
-    //     var result = await _customerService.GetAllCustomers();
-    //     return result.Success ? Ok(result) : BadRequest(result);
-    // }
-
+    
     [HttpGet]
     public async Task<IActionResult> GetCustomers([FromQuery] CustomerSpecParams custParams, CancellationToken ct)
     {

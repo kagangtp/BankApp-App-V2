@@ -19,10 +19,11 @@ using Serilog;
 using FluentValidation;
 using IlkProjem.BLL.Interfaces;
 using IlkProjem.DAL.Interfaces;
+using Supabase; // 1. ADIM: Supabase kütüphanesini ekle
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 0. BAĞLANTI CÜMLESİ TAMİRCİSİ (Format Hatasını Burası Çözer) ---
+// --- 0. BAĞLANTI CÜMLESİ TAMİRCİSİ ---
 var rawConnection = builder.Configuration.GetConnectionString("DefaultConnection") 
                     ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
                     ?? Environment.GetEnvironmentVariable("DATABASE_URL")
@@ -30,14 +31,12 @@ var rawConnection = builder.Configuration.GetConnectionString("DefaultConnection
 
 string connectionString = rawConnection ?? "";
 
-// Eğer adres postgres:// ile başlıyorsa (Railway URI), onu .NET formatına çevir
 if (!string.IsNullOrEmpty(rawConnection) && rawConnection.StartsWith("postgres"))
 {
     var databaseUri = new Uri(rawConnection);
     var userInfo = databaseUri.UserInfo.Split(':');
     connectionString = $"Host={databaseUri.Host};Port={databaseUri.Port};Database={databaseUri.AbsolutePath.TrimStart('/')};Username={userInfo[0]};Password={userInfo[1]};SSL Mode=Prefer;Trust Server Certificate=true;";
 }
-// ------------------------------------------------------------------
 
 // --- 1. LOCALIZATION SETUP ---
 builder.Services.AddLocalization();
@@ -63,12 +62,21 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
-// --- 3. DATABASE & SERVICES ---
+// --- 3. DATABASE & SUPABASE SETUP ---
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 builder.Services.AddDbContext<AppDbContext>((sp, options) =>
-    options.UseNpgsql(connectionString) // Tamir edilmiş string kullanılıyor
+    options.UseNpgsql(connectionString)
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
+// 2. ADIM: Supabase Client Kaydı
+// appsettings.json içindeki "Supabase:Url" ve "Supabase:Key" değerlerini okur
+var supabaseUrl = builder.Configuration["Supabase:Url"];
+var supabaseKey = builder.Configuration["Supabase:Key"];
+
+builder.Services.AddSingleton(provider => 
+    new Supabase.Client(supabaseUrl, supabaseKey, new SupabaseOptions { AutoConnectRealtime = true }));
+
+// --- 4. AUTHENTICATION & JWT ---
 var keyString = builder.Configuration["Jwt:Key"] ?? "fallback_secret_key_32_characters_long";
 var key = Encoding.ASCII.GetBytes(keyString);
 
@@ -93,7 +101,7 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-// --- 4. RATE LIMITING ---
+// --- 5. RATE LIMITING ---
 builder.Services.AddRateLimiter(options =>
 {
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
@@ -124,11 +132,11 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-builder.Services.AddScoped<IUserService, UserService>(); // Added UserService
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<ICalculatorService, CalculatorService>();
 builder.Services.AddScoped<IExcelService, ExcelService>();
-builder.Services.AddScoped<IFilesService, FilesService>();
+builder.Services.AddScoped<IFilesService, FilesService>(); // Bu artık Supabase kullanacak
 builder.Services.AddScoped<IFilesRepository, FilesRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<ICarService, CarService>();
@@ -144,7 +152,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-// --- 5. CORS ---
+// --- 6. CORS ---
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
@@ -154,7 +162,7 @@ builder.Services.AddCors(options =>
                         .AllowCredentials());
 });
 
-// --- 6. SERILOG ---
+// --- 7. SERILOG ---
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
@@ -165,7 +173,7 @@ builder.Host.UseSerilog();
 
 var app = builder.Build();
 
-// --- 7. MIDDLEWARE ---
+// --- 8. MIDDLEWARE ---
 var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
 app.UseRequestLocalization(locOptions.Value);
 
@@ -175,20 +183,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// --- 8. STATIC FILE SERVING ---
-var configPath = builder.Configuration["FileSettings:StoragePath"];
-var storagePath = !string.IsNullOrWhiteSpace(configPath) 
-    ? configPath 
-    : Path.Combine(Directory.GetCurrentDirectory(), "Uploads");
-
-if (!Directory.Exists(storagePath))
-    Directory.CreateDirectory(storagePath);
-
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(storagePath),
-    RequestPath = "/uploads"
-});
+// NOT: Artık Supabase kullandığımız için "app.UseStaticFiles" (yerel uploads klasörü) 
+// devre dışı bırakıldı. Dosyalar artık Supabase URL'leri üzerinden çekilecek.
 
 app.UseRouting();
 app.UseCors("AllowAngular");
@@ -206,7 +202,6 @@ using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     
-    // Sadece bağlantı varsa çalışır
     if (!string.IsNullOrWhiteSpace(connectionString))
     {
         context.Database.Migrate();
@@ -221,10 +216,10 @@ using (var scope = app.Services.CreateScope())
 
 app.MapOpenApi();
 
-// --- 10. APP RUN (RAILWAY & LOCAL) ---
+// --- 10. APP RUN ---
 if (app.Environment.IsDevelopment())
 {
-    app.Run(); // Local development uses launchSettings.json (localhost:5005)
+    app.Run();
 }
 else
 {
