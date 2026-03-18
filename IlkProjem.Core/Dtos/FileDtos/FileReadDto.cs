@@ -6,4 +6,5 @@ public class FileReadDto
     public string FileName { get; set; } = string.Empty;
     public string MimeType { get; set; } = string.Empty;
     public string RelativePath { get; set; } = string.Empty;
+    public string? PublicUrl { get; set; }
 }

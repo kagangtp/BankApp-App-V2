@@ -17,19 +17,22 @@ public class CustomerService : ICustomerService
     private readonly IValidator<CustomerCreateDto> _createValidator;
     private readonly IValidator<CustomerUpdateDto> _updateValidator;
     private readonly IValidator<CustomerDeleteDto> _deleteValidator;
+    private readonly IFilesService _filesService;
 
     public CustomerService(
         ICustomerRepository repository,
         IStringLocalizer<Messages> localizer,
         IValidator<CustomerCreateDto> createValidator,
         IValidator<CustomerUpdateDto> updateValidator,
-        IValidator<CustomerDeleteDto> deleteValidator)
+        IValidator<CustomerDeleteDto> deleteValidator,
+        IFilesService filesService)
     {
         _repository = repository;
         _localizer = localizer;
         _createValidator = createValidator;
         _updateValidator = updateValidator;
         _deleteValidator = deleteValidator;
+        _filesService = filesService;
     }
 
     public async Task<IResult> AddCustomer(CustomerCreateDto createDto, CancellationToken ct = default)
@@ -78,7 +81,9 @@ public class CustomerService : ICustomerService
             Balance = customer.Balance,
             CreatedAt = customer.CreatedAt,
             ProfileImageId = customer.ProfileImageId,
-            ProfileImagePath = customer.ProfileImage?.RelativePath
+            ProfileImagePath = customer.ProfileImage != null 
+                ? _filesService.GetPublicUrl(customer.ProfileImage.RelativePath) 
+                : null
         };
         return new SuccessDataResult<CustomerReadDto>(data);
     }

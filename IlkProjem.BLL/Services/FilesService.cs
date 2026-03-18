@@ -148,16 +148,19 @@ public class FilesService : IFilesService
     {
         var files = await _fileRepository.GetByOwnerAsync(ownerType, ownerId);
         
-        // Not: Burada URL'i frontend'e verirken GetPublicUrl eklemek isteyebilirsin
         return files.Select(f => new FileReadDto
         {
             Id = f.Id,
             FileName = f.FileName,
             MimeType = f.MimeType,
-            RelativePath = f.RelativePath,
-            // Eğer tam URL lazımsa:
-            // PublicUrl = _supabase.Storage.From(BucketName).GetPublicUrl(f.RelativePath)
+            RelativePath = _supabase.Storage.From(BucketName).GetPublicUrl(f.RelativePath)
         }).ToList();
+    }
+
+    public string GetPublicUrl(string relativePath)
+    {
+        // Supabase storage'dan public URL alıyoruz
+        return _supabase.Storage.From(BucketName).GetPublicUrl(relativePath);
     }
 
     public async Task<Files?> GetFileRecordAsync(Guid fileId)

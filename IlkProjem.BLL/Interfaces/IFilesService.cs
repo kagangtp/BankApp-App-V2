@@ -12,4 +12,5 @@ public interface IFilesService
     Task<bool> AssignOwnerAsync(Guid fileId, FileAssignDto assignDto);
     Task<List<FileReadDto>> GetByOwnerAsync(string ownerType, int ownerId);
     Task<Files?> GetFileRecordAsync(Guid fileId);
+    string GetPublicUrl(string relativePath);
 }
