@@ -82,6 +82,15 @@ public class HouseService : IHouseService
 
     public async Task<IResult> DeleteHouse(int id, CancellationToken ct = default)
     {
+        var house = await _houseRepository.GetByIdAsync(id, ct);
+        if (house == null) return new ErrorResult("Ev bulunamadı.");
+
+        var images = await _filesService.GetByOwnerAsync("House", id);
+        foreach (var img in images)
+        {
+            await _filesService.DeleteAsync(img.Id);
+        }
+
         var result = await _houseRepository.DeleteAsync(id, ct);
         return result
             ? new SuccessResult("Ev başarıyla silindi.")

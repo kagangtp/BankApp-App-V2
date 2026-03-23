@@ -11,9 +11,11 @@ public static class CustomerSeeder
             // Id'yi veritabanı vereceği için buraya hiç yazmıyoruz.
             .RuleFor(c => c.Name, f => f.Name.FullName())
             .RuleFor(c => c.Email, (f, c) => f.Internet.Email(c.Name))
-            
             // Bakiye başta 0 olarak belirlendi
-            .RuleFor(c => c.Balance, f => 0m); 
+            .RuleFor(c => c.Balance, f => 0m)
+            
+            // Tarihlerin 0001-01-01 gelmemesi için son 1 yıl içinde rastgele bir tarih atıyoruz.
+            .RuleFor(c => c.CreatedAt, f => f.Date.Past(1));
 
         return customerFaker.Generate(count);
     }

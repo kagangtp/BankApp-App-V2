@@ -58,4 +58,12 @@ public class FilesController : ControllerBase
             return NotFound("Dosya bulunamadı.");
         }
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var result = await _filesService.DeleteAsync(id);
+        if (!result) return NotFound(new { success = false, message = "Dosya bulunamadı veya silinemedi." });
+        return Ok(new { success = true, message = "Dosya başarıyla silindi." });
+    }
 }

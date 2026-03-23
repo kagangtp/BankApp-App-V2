@@ -82,6 +82,15 @@ public class CarService : ICarService
 
     public async Task<IResult> DeleteCar(int id, CancellationToken ct = default)
     {
+        var car = await _carRepository.GetByIdAsync(id, ct);
+        if (car == null) return new ErrorResult("Araba bulunamadı.");
+
+        var images = await _filesService.GetByOwnerAsync("Car", id);
+        foreach (var img in images)
+        {
+            await _filesService.DeleteAsync(img.Id);
+        }
+
         var result = await _carRepository.DeleteAsync(id, ct);
         return result
             ? new SuccessResult("Araba başarıyla silindi.")
