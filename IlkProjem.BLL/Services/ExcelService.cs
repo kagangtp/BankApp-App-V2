@@ -12,7 +12,10 @@ public class ExcelService : IExcelService
         var worksheet = workbook.Worksheets.Add(sheetName);
         
         // T tipinin public property'lerini alıyoruz (Reflection)
-        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        // ExcelIgnore attribute'u olanları hariç tutuyoruz
+        var properties = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance)
+            .Where(p => !Attribute.IsDefined(p, typeof(IlkProjem.Core.Attributes.ExcelIgnoreAttribute)))
+            .ToArray();
 
         // 1. BAŞLIKLARI OLUŞTUR (Property isimlerinden)
         for (int i = 0; i < properties.Length; i++)
