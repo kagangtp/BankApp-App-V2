@@ -62,6 +62,7 @@ public class CustomerService : ICustomerService
             Email = c.Email,
             Balance = c.Balance,
             CreatedAt = c.CreatedAt,
+            TcKimlikNo = c.TcKimlikNo,
             ProfileImageId = c.ProfileImageId
         }).ToList();
 
@@ -80,6 +81,7 @@ public class CustomerService : ICustomerService
             Email = customer.Email, 
             Balance = customer.Balance,
             CreatedAt = customer.CreatedAt,
+            TcKimlikNo = customer.TcKimlikNo,
             ProfileImageId = customer.ProfileImageId,
             ProfileImagePath = customer.ProfileImage != null 
                 ? _filesService.GetPublicUrl(customer.ProfileImage.RelativePath) 

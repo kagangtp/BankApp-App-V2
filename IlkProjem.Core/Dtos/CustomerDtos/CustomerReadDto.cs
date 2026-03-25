@@ -14,6 +14,8 @@ public class CustomerReadDto
     public DateTime CreatedAt { get; set; }
     
     [ExcelIgnore]
+    public string? TcKimlikNo { get; set; }
+    [ExcelIgnore]
     public Guid? ProfileImageId { get; set; }
     
     [ExcelIgnore]

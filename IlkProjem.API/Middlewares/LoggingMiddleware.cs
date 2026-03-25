@@ -41,20 +41,9 @@ public class LoggingMiddleware
             if (ex is BusinessException bEx)
             {
                 innerErrorCode = bEx.ErrorCode.ToString();
-                context.Response.StatusCode = 400;
-            }
-            else
-            {
-                context.Response.StatusCode = 500;
             }
 
-            context.Response.ContentType = "application/json";
-            var errorResponse = System.Text.Json.JsonSerializer.Serialize(new
-            {
-                error = ex is BusinessException ? exceptionMessage : "Sunucu hatası oluştu.",
-                errorCode = innerErrorCode
-            });
-            await context.Response.WriteAsync(errorResponse);
+            throw; // ExceptionHandlerMiddleware yakalasın
         }
         finally
         {

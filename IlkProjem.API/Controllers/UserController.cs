@@ -3,6 +3,7 @@ using IlkProjem.Core.Dtos.UserDtos;
 using IlkProjem.Core.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using IlkProjem.Core.Constants;
 
 namespace IlkProjem.API.Controllers;
 
@@ -32,6 +33,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    [Authorize(Policy = Policies.UserManagement)]
     [HttpGet]
     public async Task<IActionResult> GetAllUsersAsync(CancellationToken ct)
     {
@@ -39,6 +41,7 @@ public class UserController : ControllerBase
         return Ok(users);
     }
 
+    [Authorize(Policy = Policies.UserManagement)]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetUserByIdAsync(int id, CancellationToken ct)
     {
@@ -48,6 +51,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    [Authorize(Policy = Policies.UserManagement)]
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUserAsync(int id, [FromBody] UserUpdateDto userUpdateDto, CancellationToken ct)
     {
@@ -55,6 +59,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
+    [Authorize(Policy = Policies.UserManagement)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteUserAsync(int id, CancellationToken ct)
     {

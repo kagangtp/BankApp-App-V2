@@ -25,6 +25,7 @@ public class CustomerUpdateDtoValidator : AbstractValidator<CustomerUpdateDto>
 
         RuleFor(x => x.TcKimlikNo)
             .Must(ValidationHelpers.BeValidTcKimlik)
+            .When(x => !string.IsNullOrEmpty(x.TcKimlikNo))
             .WithMessage("Girilen TC Kimlik No geçerli değildir.");
     }
 }

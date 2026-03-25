@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using IlkProjem.BLL.Interfaces;
 using IlkProjem.Core.Dtos.CarDtos;
+using IlkProjem.Core.Constants;
 
 namespace IlkProjem.API.Controllers;
 
@@ -17,6 +18,7 @@ public class CarController : ControllerBase
         _carService = carService;
     }
 
+    [Authorize(Policy = Policies.CustomerManagement)]
     [HttpPost]
     public async Task<IActionResult> Create(CarCreateDto createDto, CancellationToken ct)
     {
@@ -38,6 +40,7 @@ public class CarController : ControllerBase
         return result.Success ? Ok(result) : NotFound(result);
     }
 
+    [Authorize(Policy = Policies.CustomerManagement)]
     [HttpPut]
     public async Task<IActionResult> Update(CarUpdateDto updateDto, CancellationToken ct)
     {
@@ -45,6 +48,7 @@ public class CarController : ControllerBase
         return result.Success ? Ok(result) : BadRequest(result);
     }
 
+    [Authorize(Policy = Policies.AdminOnly)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id, CancellationToken ct)
     {

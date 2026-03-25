@@ -5,6 +5,7 @@ using IlkProjem.Core.Models;
 using IlkProjem.Core.Dtos.SpecificationDtos;
 using Microsoft.AspNetCore.Authorization;
 using IlkProjem.Core.Utilities.Results;
+using IlkProjem.Core.Constants;
 
 namespace IlkProjem.API.Controllers;
 
@@ -38,6 +39,7 @@ public class CustomerController : ControllerBase
     }
 
     // "Ekle"
+    [Authorize(Policy = Policies.CustomerManagement)]
     [HttpPost] 
     public async Task<IActionResult> Post(CustomerCreateDto createDto, CancellationToken ct)
     {
@@ -46,6 +48,7 @@ public class CustomerController : ControllerBase
     }
 
     // "Güncelle"
+    [Authorize(Policy = Policies.CustomerManagement)]
     [HttpPut] 
     public async Task<IActionResult> Update(CustomerUpdateDto updateDto, CancellationToken ct)
     {
@@ -54,6 +57,7 @@ public class CustomerController : ControllerBase
     }
 
     // "Sil"
+    [Authorize(Policy = Policies.AdminOnly)]
     [HttpDelete] 
     public async Task<IActionResult> Delete(CustomerDeleteDto deleteDto, CancellationToken ct)
     {

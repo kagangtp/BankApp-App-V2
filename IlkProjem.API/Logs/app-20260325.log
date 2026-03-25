@@ -1,0 +1,858 @@
+2026-03-25 13:50:06.765 [INF] Executed DbCommand (8ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-03-25 13:50:06.847 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-03-25 13:50:06.866 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+2026-03-25 13:50:06.869 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-03-25 13:50:06.870 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+2026-03-25 13:50:06.870 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-03-25 13:50:06.872 [INF] No migrations were applied. The database is already up to date.
+2026-03-25 13:50:06.964 [INF] Executed DbCommand (3ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Customers" AS c
+    WHERE NOT (c."IsDeleted"))
+2026-03-25 13:50:06.970 [INF] User profile is available. Using '/Users/kagan/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-03-25 13:50:07.004 [INF] Now listening on: http://localhost:5005
+2026-03-25 13:50:07.005 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-25 13:50:07.005 [INF] Hosting environment: Development
+2026-03-25 13:50:07.005 [INF] Content root path: /Users/kagan/Desktop/BankApp-V2/BankApp-App-V2/IlkProjem.API
+2026-03-25 13:53:30.046 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/auth/login - null null
+2026-03-25 13:53:30.069 [INF] CORS policy execution successful.
+2026-03-25 13:53:30.072 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/auth/login - 204 null null 27.4467ms
+2026-03-25 13:53:30.076 [INF] Request starting HTTP/1.1 POST http://localhost:5005/api/auth/login - application/json 49
+2026-03-25 13:53:30.077 [INF] CORS policy execution successful.
+2026-03-25 13:53:30.096 [WRN] Failed to determine the https port for redirect.
+2026-03-25 13:53:30.097 [INF] Executing endpoint 'AuthController.Login (IlkProjem.API)'
+2026-03-25 13:53:30.104 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(IlkProjem.Core.Dtos.AuthDtos.LoginDto, System.Threading.CancellationToken) on controller AuthController (IlkProjem.API).
+2026-03-25 13:53:30.157 [INF] Executed DbCommand (6ms) [Parameters=[@email='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Email" = @email
+LIMIT 1
+2026-03-25 13:53:30.457 [INF] Executed DbCommand (4ms) [Parameters=[@p0='?' (DbType = DateTime), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = DateTime), @p5='?', @p6='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "RefreshTokens" ("CreatedAt", "DeviceInfo", "ExpiresAt", "ReplacedByToken", "RevokedAt", "Token", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+RETURNING "Id";
+2026-03-25 13:53:30.468 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.BLL.Services.LoginDataResult'.
+2026-03-25 13:53:30.473 [INF] Executed action AuthController.Login (IlkProjem.API) in 368.1001ms
+2026-03-25 13:53:30.473 [INF] Executed endpoint 'AuthController.Login (IlkProjem.API)'
+2026-03-25 13:53:30.486 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:30.489 [INF] Request finished HTTP/1.1 POST http://localhost:5005/api/auth/login - 200 null application/json; charset=utf-8 413.0606ms
+2026-03-25 13:53:30.505 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - null null
+2026-03-25 13:53:30.505 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 13:53:30.505 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 13:53:30.507 [INF] CORS policy execution successful.
+2026-03-25 13:53:30.507 [INF] CORS policy execution successful.
+2026-03-25 13:53:30.507 [INF] CORS policy execution successful.
+2026-03-25 13:53:30.507 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - 204 null null 1.8253ms
+2026-03-25 13:53:30.507 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 204 null null 1.9125ms
+2026-03-25 13:53:30.507 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - 204 null null 2.1357ms
+2026-03-25 13:53:30.508 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 13:53:30.508 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 13:53:30.508 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 13:53:30.511 [INF] CORS policy execution successful.
+2026-03-25 13:53:30.512 [INF] CORS policy execution successful.
+2026-03-25 13:53:30.513 [INF] CORS policy execution successful.
+2026-03-25 13:53:30.533 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 13:53:30.533 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 13:53:30.533 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 13:53:30.536 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 13:53:30.536 [INF] Route matched with {action = "GetCurrentUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCurrentUserAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 13:53:30.536 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 13:53:30.564 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:30.564 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:30.578 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Id" = @p
+LIMIT 1
+2026-03-25 13:53:30.578 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Dtos.UserDtos.UserDto'.
+2026-03-25 13:53:30.580 [INF] Executed action IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API) in 43.5744ms
+2026-03-25 13:53:30.580 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 13:53:30.581 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 13:53:30.581 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:30.582 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:30.582 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 200 null application/json; charset=utf-8 73.2716ms
+2026-03-25 13:53:30.583 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 13:53:30.583 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 46.6737ms
+2026-03-25 13:53:30.583 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 13:53:30.585 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 48.9493ms
+2026-03-25 13:53:30.585 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 13:53:30.593 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:30.593 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:30.593 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 84.5652ms
+2026-03-25 13:53:30.593 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 84.5137ms
+2026-03-25 13:53:34.656 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User - null null
+2026-03-25 13:53:34.657 [INF] CORS policy execution successful.
+2026-03-25 13:53:34.657 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User - 204 null null 1.4324ms
+2026-03-25 13:53:34.659 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User - null null
+2026-03-25 13:53:34.660 [INF] CORS policy execution successful.
+2026-03-25 13:53:34.668 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Admin)
+2026-03-25 13:53:34.670 [INF] AuthenticationScheme: Bearer was forbidden.
+2026-03-25 13:53:34.675 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:34.676 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User - 403 0 null 16.9186ms
+2026-03-25 13:53:36.805 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - null null
+2026-03-25 13:53:36.805 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 13:53:36.806 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 13:53:36.806 [INF] CORS policy execution successful.
+2026-03-25 13:53:36.806 [INF] CORS policy execution successful.
+2026-03-25 13:53:36.806 [INF] CORS policy execution successful.
+2026-03-25 13:53:36.806 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - 204 null null 0.6626ms
+2026-03-25 13:53:36.806 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - 204 null null 0.8332ms
+2026-03-25 13:53:36.806 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 204 null null 0.5582ms
+2026-03-25 13:53:36.809 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 13:53:36.809 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 13:53:36.809 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 13:53:36.809 [INF] CORS policy execution successful.
+2026-03-25 13:53:36.809 [INF] CORS policy execution successful.
+2026-03-25 13:53:36.809 [INF] CORS policy execution successful.
+2026-03-25 13:53:36.810 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 13:53:36.811 [INF] Route matched with {action = "GetCurrentUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCurrentUserAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 13:53:36.812 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 13:53:36.812 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 13:53:36.813 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 13:53:36.814 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 13:53:36.816 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:36.821 [INF] Executed DbCommand (5ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:36.822 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 13:53:36.822 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 9.738ms
+2026-03-25 13:53:36.822 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Id" = @p
+LIMIT 1
+2026-03-25 13:53:36.822 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 13:53:36.822 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Dtos.UserDtos.UserDto'.
+2026-03-25 13:53:36.823 [INF] Executed action IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API) in 11.7369ms
+2026-03-25 13:53:36.823 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 13:53:36.824 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:36.825 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:36.825 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 13:53:36.825 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 11.2189ms
+2026-03-25 13:53:36.825 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 200 null application/json; charset=utf-8 16.4117ms
+2026-03-25 13:53:36.825 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 13:53:36.830 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:36.830 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 21.6567ms
+2026-03-25 13:53:36.831 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:36.831 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 22.8544ms
+2026-03-25 13:53:37.989 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User - null null
+2026-03-25 13:53:37.990 [INF] CORS policy execution successful.
+2026-03-25 13:53:37.991 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Admin)
+2026-03-25 13:53:37.991 [INF] AuthenticationScheme: Bearer was forbidden.
+2026-03-25 13:53:37.994 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:37.995 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User - 403 0 null 5.2694ms
+2026-03-25 13:53:39.067 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 13:53:39.067 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 13:53:39.067 [INF] CORS policy execution successful.
+2026-03-25 13:53:39.067 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 13:53:39.067 [INF] CORS policy execution successful.
+2026-03-25 13:53:39.068 [INF] CORS policy execution successful.
+2026-03-25 13:53:39.068 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 13:53:39.068 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 13:53:39.068 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 13:53:39.068 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 13:53:39.068 [INF] Route matched with {action = "GetCurrentUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCurrentUserAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 13:53:39.069 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 13:53:39.070 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:39.070 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:39.072 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 13:53:39.073 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 4.09ms
+2026-03-25 13:53:39.073 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 13:53:39.075 [INF] Executed DbCommand (2ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Id" = @p
+LIMIT 1
+2026-03-25 13:53:39.075 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Dtos.UserDtos.UserDto'.
+2026-03-25 13:53:39.076 [INF] Executed action IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API) in 7.1255ms
+2026-03-25 13:53:39.076 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 13:53:39.076 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 13:53:39.076 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 13:53:39.077 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 8.0037ms
+2026-03-25 13:53:39.077 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 13:53:39.077 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:39.077 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:39.078 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 11.5463ms
+2026-03-25 13:53:39.078 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 200 null application/json; charset=utf-8 11.7628ms
+2026-03-25 13:53:39.081 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 13:53:39.082 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 14.9833ms
+2026-03-25 14:03:39.807 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User - null null
+2026-03-25 14:03:39.808 [INF] CORS policy execution successful.
+2026-03-25 14:03:39.808 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User - 204 null null 1.5287ms
+2026-03-25 14:03:39.810 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User - null null
+2026-03-25 14:03:39.810 [INF] CORS policy execution successful.
+2026-03-25 14:03:39.812 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Admin)
+2026-03-25 14:03:39.812 [INF] AuthenticationScheme: Bearer was forbidden.
+2026-03-25 14:03:39.816 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:03:39.816 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User - 403 0 null 6.3741ms
+2026-03-25 14:03:50.076 [INF] Application is shutting down...
+2026-03-25 14:03:52.677 [INF] Executed DbCommand (9ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-03-25 14:03:52.765 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-03-25 14:03:52.784 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+2026-03-25 14:03:52.788 [INF] Acquiring an exclusive lock for migration application. See https://aka.ms/efcore-docs-migrations-lock for more information if this takes too long.
+2026-03-25 14:03:52.788 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+LOCK TABLE "__EFMigrationsHistory" IN ACCESS EXCLUSIVE MODE
+2026-03-25 14:03:52.789 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT "MigrationId", "ProductVersion"
+FROM "__EFMigrationsHistory"
+ORDER BY "MigrationId";
+2026-03-25 14:03:52.790 [INF] No migrations were applied. The database is already up to date.
+2026-03-25 14:03:52.886 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT EXISTS (
+    SELECT 1
+    FROM "Customers" AS c
+    WHERE NOT (c."IsDeleted"))
+2026-03-25 14:03:52.893 [INF] User profile is available. Using '/Users/kagan/.aspnet/DataProtection-Keys' as key repository; keys will not be encrypted at rest.
+2026-03-25 14:03:52.922 [INF] Now listening on: http://localhost:5005
+2026-03-25 14:03:52.923 [INF] Application started. Press Ctrl+C to shut down.
+2026-03-25 14:03:52.923 [INF] Hosting environment: Development
+2026-03-25 14:03:52.923 [INF] Content root path: /Users/kagan/Desktop/BankApp-V2/BankApp-App-V2/IlkProjem.API
+2026-03-25 14:04:05.851 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - null null
+2026-03-25 14:04:05.851 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:04:05.851 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:04:05.877 [INF] CORS policy execution successful.
+2026-03-25 14:04:05.877 [INF] CORS policy execution successful.
+2026-03-25 14:04:05.877 [INF] CORS policy execution successful.
+2026-03-25 14:04:05.879 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 204 null null 29.0232ms
+2026-03-25 14:04:05.881 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - 204 null null 29.0392ms
+2026-03-25 14:04:05.882 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:04:05.882 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - 204 null null 29.1478ms
+2026-03-25 14:04:05.882 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:04:05.882 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 14:04:05.885 [INF] CORS policy execution successful.
+2026-03-25 14:04:05.886 [INF] CORS policy execution successful.
+2026-03-25 14:04:05.886 [INF] CORS policy execution successful.
+2026-03-25 14:04:05.923 [WRN] Failed to determine the https port for redirect.
+2026-03-25 14:04:05.923 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:04:05.923 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:04:05.923 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:04:05.930 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:04:05.930 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:04:05.930 [INF] Route matched with {action = "GetCurrentUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCurrentUserAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 14:04:05.964 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:04:05.964 [INF] Executed DbCommand (4ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:04:05.975 [INF] Executed DbCommand (5ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Id" = @p
+LIMIT 1
+2026-03-25 14:04:05.995 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Dtos.UserDtos.UserDto'.
+2026-03-25 14:04:05.998 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 14:04:06.000 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:04:06.001 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:04:06.001 [INF] Executed action IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API) in 69.9727ms
+2026-03-25 14:04:06.001 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 70.3535ms
+2026-03-25 14:04:06.002 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:04:06.002 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:04:06.034 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 104.3682ms
+2026-03-25 14:04:06.034 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:04:06.091 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:06.091 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:06.091 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:06.102 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 200 null application/json; charset=utf-8 220.3208ms
+2026-03-25 14:04:06.102 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 220.5378ms
+2026-03-25 14:04:06.102 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 220.8156ms
+2026-03-25 14:04:07.980 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User - null null
+2026-03-25 14:04:07.981 [INF] CORS policy execution successful.
+2026-03-25 14:04:07.981 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User - 204 null null 1.2032ms
+2026-03-25 14:04:07.983 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User - null null
+2026-03-25 14:04:07.984 [INF] CORS policy execution successful.
+2026-03-25 14:04:07.993 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Admin)
+2026-03-25 14:04:07.995 [INF] AuthenticationScheme: Bearer was forbidden.
+2026-03-25 14:04:08.035 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:08.036 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User - 403 0 null 53.3762ms
+2026-03-25 14:04:09.602 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:04:09.602 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 14:04:09.602 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:04:09.603 [INF] CORS policy execution successful.
+2026-03-25 14:04:09.603 [INF] CORS policy execution successful.
+2026-03-25 14:04:09.604 [INF] CORS policy execution successful.
+2026-03-25 14:04:09.605 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:04:09.605 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:04:09.605 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:04:09.605 [INF] Route matched with {action = "GetCurrentUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCurrentUserAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 14:04:09.605 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:04:09.605 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:04:09.609 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:04:09.609 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:04:09.616 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Id" = @p
+LIMIT 1
+2026-03-25 14:04:09.617 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 14:04:09.617 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 11.5245ms
+2026-03-25 14:04:09.617 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Dtos.UserDtos.UserDto'.
+2026-03-25 14:04:09.617 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:04:09.617 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:04:09.617 [INF] Executed action IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API) in 12.0388ms
+2026-03-25 14:04:09.618 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:04:09.618 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:04:09.618 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 12.9218ms
+2026-03-25 14:04:09.619 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:04:09.620 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:09.621 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 200 null application/json; charset=utf-8 18.5052ms
+2026-03-25 14:04:09.625 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:09.625 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:09.625 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 22.4572ms
+2026-03-25 14:04:09.625 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 22.605ms
+2026-03-25 14:04:12.067 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User - null null
+2026-03-25 14:04:12.068 [INF] CORS policy execution successful.
+2026-03-25 14:04:12.071 [INF] Authorization failed. These requirements were not met:
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Admin)
+2026-03-25 14:04:12.071 [INF] AuthenticationScheme: Bearer was forbidden.
+2026-03-25 14:04:12.074 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:12.075 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User - 403 0 null 7.9103ms
+2026-03-25 14:04:39.399 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User - null null
+2026-03-25 14:04:39.401 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+RolesAuthorizationRequirement:User.IsInRole must be true for one of the following roles: (Admin)
+2026-03-25 14:04:39.403 [INF] AuthenticationScheme: Bearer was challenged.
+2026-03-25 14:04:39.407 [INF] Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:04:39.408 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User - 401 0 null 8.8522ms
+2026-03-25 14:25:51.011 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - null null
+2026-03-25 14:25:51.012 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.012 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - 204 null null 0.9876ms
+2026-03-25 14:25:51.013 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:25:51.014 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.014 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - 204 null null 0.6098ms
+2026-03-25 14:25:51.016 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:25:51.016 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.016 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 204 null null 0.3907ms
+2026-03-25 14:25:51.018 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 14:25:51.018 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.019 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:25:51.019 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:25:51.019 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.019 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.023 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '3/25/2026 11:08:30 AM', Current time (UTC): '3/25/2026 11:25:51 AM'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-03-25 14:25:51.023 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '3/25/2026 11:08:30 AM', Current time (UTC): '3/25/2026 11:25:51 AM'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-03-25 14:25:51.023 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '3/25/2026 11:08:30 AM', Current time (UTC): '3/25/2026 11:25:51 AM'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-03-25 14:25:51.033 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '3/25/2026 11:08:30 AM', Current time (UTC): '3/25/2026 11:25:51 AM'.
+2026-03-25 14:25:51.034 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '3/25/2026 11:08:30 AM', Current time (UTC): '3/25/2026 11:25:51 AM'.
+2026-03-25 14:25:51.034 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '3/25/2026 11:08:30 AM', Current time (UTC): '3/25/2026 11:25:51 AM'.
+2026-03-25 14:25:51.034 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-03-25 14:25:51.034 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-03-25 14:25:51.034 [INF] Authorization failed. These requirements were not met:
+DenyAnonymousAuthorizationRequirement: Requires an authenticated user.
+2026-03-25 14:25:51.035 [INF] AuthenticationScheme: Bearer was challenged.
+2026-03-25 14:25:51.035 [INF] AuthenticationScheme: Bearer was challenged.
+2026-03-25 14:25:51.035 [INF] AuthenticationScheme: Bearer was challenged.
+2026-03-25 14:25:51.037 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.038 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 401 0 null 19.4535ms
+2026-03-25 14:25:51.049 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/auth/refresh - null null
+2026-03-25 14:25:51.049 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.049 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/auth/refresh - 204 null null 0.7249ms
+2026-03-25 14:25:51.052 [INF] Executed DbCommand (5ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.052 [INF] Executed DbCommand (3ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.052 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 401 0 null 33.614ms
+2026-03-25 14:25:51.053 [INF] Request starting HTTP/1.1 POST http://localhost:5005/api/auth/refresh - application/json 2
+2026-03-25 14:25:51.052 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 401 0 null 34.428ms
+2026-03-25 14:25:51.054 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.057 [INF] Failed to validate the token.
+Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '3/25/2026 11:08:30 AM', Current time (UTC): '3/25/2026 11:25:51 AM'.
+   at Microsoft.IdentityModel.Tokens.ValidatorUtilities.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.Tokens.Validators.ValidateLifetime(Nullable`1 notBefore, Nullable`1 expires, SecurityToken securityToken, TokenValidationParameters validationParameters)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateTokenPayloadAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+   at Microsoft.IdentityModel.JsonWebTokens.JsonWebTokenHandler.ValidateJWSAsync(JsonWebToken jsonWebToken, TokenValidationParameters validationParameters, BaseConfiguration configuration)
+2026-03-25 14:25:51.057 [INF] Bearer was not authenticated. Failure message: IDX10223: Lifetime validation failed. The token is expired. ValidTo (UTC): '3/25/2026 11:08:30 AM', Current time (UTC): '3/25/2026 11:25:51 AM'.
+2026-03-25 14:25:51.058 [INF] Executing endpoint 'AuthController.Refresh (IlkProjem.API)'
+2026-03-25 14:25:51.062 [INF] Route matched with {action = "Refresh", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Refresh(System.Threading.CancellationToken) on controller AuthController (IlkProjem.API).
+2026-03-25 14:25:51.105 [INF] Executed DbCommand (3ms) [Parameters=[@hashedToken='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT r."Id", r."CreatedAt", r."DeviceInfo", r."ExpiresAt", r."ReplacedByToken", r."RevokedAt", r."Token", r."UserId", u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "RefreshTokens" AS r
+INNER JOIN "Users" AS u ON r."UserId" = u."Id"
+WHERE r."Token" = @hashedToken
+LIMIT 1
+2026-03-25 14:25:51.131 [INF] Executed DbCommand (4ms) [Parameters=[@p2='?' (DbType = Int32), @p0='?', @p1='?' (DbType = DateTime), @p3='?' (DbType = DateTime), @p4='?', @p5='?' (DbType = DateTime), @p6='?', @p7='?' (DbType = DateTime), @p8='?', @p9='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+UPDATE "RefreshTokens" SET "ReplacedByToken" = @p0, "RevokedAt" = @p1
+WHERE "Id" = @p2;
+INSERT INTO "RefreshTokens" ("CreatedAt", "DeviceInfo", "ExpiresAt", "ReplacedByToken", "RevokedAt", "Token", "UserId")
+VALUES (@p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.140 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType1`3[[System.Boolean, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[IlkProjem.Core.Dtos.AuthDtos.LoginResponseDto, IlkProjem.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:25:51.142 [INF] Executed action AuthController.Refresh (IlkProjem.API) in 79.6333ms
+2026-03-25 14:25:51.142 [INF] Executed endpoint 'AuthController.Refresh (IlkProjem.API)'
+2026-03-25 14:25:51.144 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.144 [INF] Request finished HTTP/1.1 POST http://localhost:5005/api/auth/refresh - 200 null application/json; charset=utf-8 91.3956ms
+2026-03-25 14:25:51.147 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 14:25:51.148 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.148 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:25:51.148 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:25:51.148 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.148 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.149 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:25:51.149 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:25:51.149 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:25:51.149 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:25:51.149 [INF] Route matched with {action = "GetCurrentUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCurrentUserAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 14:25:51.149 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:25:51.150 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:25:51.150 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:25:51.151 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 14:25:51.151 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Id" = @p
+LIMIT 1
+2026-03-25 14:25:51.151 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 2.0415ms
+2026-03-25 14:25:51.151 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Dtos.UserDtos.UserDto'.
+2026-03-25 14:25:51.151 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:25:51.151 [INF] Executed action IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API) in 2.2169ms
+2026-03-25 14:25:51.151 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:25:51.151 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:25:51.152 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:25:51.152 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 3.3072ms
+2026-03-25 14:25:51.152 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:25:51.153 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.153 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 200 null application/json; charset=utf-8 6.4344ms
+2026-03-25 14:25:51.154 [INF] Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.155 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 6.3981ms
+2026-03-25 14:25:51.156 [INF] Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.156 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 8.0384ms
+2026-03-25 14:25:51.819 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 14:25:51.819 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:25:51.820 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.820 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.820 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:25:51.820 [INF] CORS policy execution successful.
+2026-03-25 14:25:51.821 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:25:51.821 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:25:51.821 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:25:51.821 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:25:51.821 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:25:51.821 [INF] Route matched with {action = "GetCurrentUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCurrentUserAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 14:25:51.823 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:25:51.824 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:25:51.824 [INF] Executed DbCommand (0ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Id" = @p
+LIMIT 1
+2026-03-25 14:25:51.824 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Dtos.UserDtos.UserDto'.
+2026-03-25 14:25:51.824 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 14:25:51.824 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:25:51.824 [INF] Executed action IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API) in 2.5772ms
+2026-03-25 14:25:51.824 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 2.6637ms
+2026-03-25 14:25:51.824 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:25:51.825 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:25:51.825 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 3.619ms
+2026-03-25 14:25:51.825 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:25:51.825 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:25:51.827 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.827 [INF] Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.827 [INF] Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:51.827 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 200 null application/json; charset=utf-8 8.4674ms
+2026-03-25 14:25:51.828 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 8.6523ms
+2026-03-25 14:25:51.828 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 7.617ms
+2026-03-25 14:25:53.705 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/auth/revoke - null null
+2026-03-25 14:25:53.705 [INF] CORS policy execution successful.
+2026-03-25 14:25:53.706 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/auth/revoke - 204 null null 1.2539ms
+2026-03-25 14:25:53.713 [INF] Request starting HTTP/1.1 POST http://localhost:5005/api/auth/revoke - application/json 2
+2026-03-25 14:25:53.716 [INF] CORS policy execution successful.
+2026-03-25 14:25:53.717 [INF] Executing endpoint 'AuthController.Revoke (IlkProjem.API)'
+2026-03-25 14:25:53.725 [INF] Route matched with {action = "Revoke", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Revoke(System.Threading.CancellationToken) on controller AuthController (IlkProjem.API).
+2026-03-25 14:25:53.728 [INF] Executed DbCommand (1ms) [Parameters=[@hashedToken='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT r."Id", r."CreatedAt", r."DeviceInfo", r."ExpiresAt", r."ReplacedByToken", r."RevokedAt", r."Token", r."UserId", u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "RefreshTokens" AS r
+INNER JOIN "Users" AS u ON r."UserId" = u."Id"
+WHERE r."Token" = @hashedToken
+LIMIT 1
+2026-03-25 14:25:53.730 [INF] Executed DbCommand (1ms) [Parameters=[@p1='?' (DbType = Int32), @p0='?' (DbType = DateTime)], CommandType='"Text"', CommandTimeout='30']
+UPDATE "RefreshTokens" SET "RevokedAt" = @p0
+WHERE "Id" = @p1;
+2026-03-25 14:25:53.731 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType0`1[[System.String, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:25:53.732 [INF] Executed action AuthController.Revoke (IlkProjem.API) in 7.2458ms
+2026-03-25 14:25:53.732 [INF] Executed endpoint 'AuthController.Revoke (IlkProjem.API)'
+2026-03-25 14:25:53.733 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:25:53.733 [INF] Request finished HTTP/1.1 POST http://localhost:5005/api/auth/revoke - 200 null application/json; charset=utf-8 20.1019ms
+2026-03-25 14:26:02.681 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/auth/login - null null
+2026-03-25 14:26:02.682 [INF] CORS policy execution successful.
+2026-03-25 14:26:02.682 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/auth/login - 204 null null 1.3823ms
+2026-03-25 14:26:02.685 [INF] Request starting HTTP/1.1 POST http://localhost:5005/api/auth/login - application/json 49
+2026-03-25 14:26:02.685 [INF] CORS policy execution successful.
+2026-03-25 14:26:02.686 [INF] Executing endpoint 'AuthController.Login (IlkProjem.API)'
+2026-03-25 14:26:02.696 [INF] Route matched with {action = "Login", controller = "Auth"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(IlkProjem.Core.Dtos.AuthDtos.LoginDto, System.Threading.CancellationToken) on controller AuthController (IlkProjem.API).
+2026-03-25 14:26:02.719 [INF] Executed DbCommand (1ms) [Parameters=[@email='?'], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Email" = @email
+LIMIT 1
+2026-03-25 14:26:02.954 [INF] Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = DateTime), @p1='?', @p2='?' (DbType = DateTime), @p3='?', @p4='?' (DbType = DateTime), @p5='?', @p6='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "RefreshTokens" ("CreatedAt", "DeviceInfo", "ExpiresAt", "ReplacedByToken", "RevokedAt", "Token", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6)
+RETURNING "Id";
+2026-03-25 14:26:02.955 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.BLL.Services.LoginDataResult'.
+2026-03-25 14:26:02.955 [INF] Executed action AuthController.Login (IlkProjem.API) in 259.2841ms
+2026-03-25 14:26:02.956 [INF] Executed endpoint 'AuthController.Login (IlkProjem.API)'
+2026-03-25 14:26:02.956 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:26:02.957 [INF] Request finished HTTP/1.1 POST http://localhost:5005/api/auth/login - 200 null application/json; charset=utf-8 271.7642ms
+2026-03-25 14:26:02.976 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - null null
+2026-03-25 14:26:02.976 [INF] CORS policy execution successful.
+2026-03-25 14:26:02.977 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User/me - 204 null null 1.0565ms
+2026-03-25 14:26:02.978 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:26:02.978 [INF] CORS policy execution successful.
+2026-03-25 14:26:02.978 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - 204 null null 0.8996ms
+2026-03-25 14:26:02.979 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User/me - null null
+2026-03-25 14:26:02.979 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:26:02.980 [INF] CORS policy execution successful.
+2026-03-25 14:26:02.980 [INF] CORS policy execution successful.
+2026-03-25 14:26:02.980 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 204 null null 0.4407ms
+2026-03-25 14:26:02.980 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:26:02.980 [INF] CORS policy execution successful.
+2026-03-25 14:26:02.981 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:26:02.981 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:26:02.981 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:26:02.981 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:26:02.981 [INF] Route matched with {action = "GetCurrentUser", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCurrentUserAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 14:26:02.981 [INF] CORS policy execution successful.
+2026-03-25 14:26:02.982 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:26:02.982 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:26:02.983 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:26:02.983 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:26:02.983 [INF] Executed DbCommand (1ms) [Parameters=[@p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+WHERE u."Id" = @p
+LIMIT 1
+2026-03-25 14:26:02.984 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 14:26:02.984 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Dtos.UserDtos.UserDto'.
+2026-03-25 14:26:02.984 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 1.6028ms
+2026-03-25 14:26:02.984 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:26:02.984 [INF] Executed action IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API) in 2.5922ms
+2026-03-25 14:26:02.984 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetCurrentUserAsync (IlkProjem.API)'
+2026-03-25 14:26:02.984 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:26:02.984 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:26:02.984 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 3.5029ms
+2026-03-25 14:26:02.984 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:26:02.985 [INF] Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:26:02.985 [INF] Executed DbCommand (0ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:26:02.985 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User/me - 200 null application/json; charset=utf-8 5.6574ms
+2026-03-25 14:26:02.985 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 4.5084ms
+2026-03-25 14:26:02.986 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:26:02.986 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 6.1312ms
+2026-03-25 14:26:08.326 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User - null null
+2026-03-25 14:26:08.326 [INF] CORS policy execution successful.
+2026-03-25 14:26:08.327 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User - 204 null null 1.256ms
+2026-03-25 14:26:08.328 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User - null null
+2026-03-25 14:26:08.328 [INF] CORS policy execution successful.
+2026-03-25 14:26:08.329 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetAllUsersAsync (IlkProjem.API)'
+2026-03-25 14:26:08.339 [INF] Route matched with {action = "GetAllUsers", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllUsersAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 14:26:08.362 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+2026-03-25 14:26:08.365 [INF] Executing OkObjectResult, writing value of type 'System.Linq.Enumerable+ListSelectIterator`2[[IlkProjem.Core.Models.User, IlkProjem.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[IlkProjem.Core.Dtos.UserDtos.UserDto, IlkProjem.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 14:26:08.366 [INF] Executed action IlkProjem.API.Controllers.UserController.GetAllUsersAsync (IlkProjem.API) in 27.2607ms
+2026-03-25 14:26:08.366 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetAllUsersAsync (IlkProjem.API)'
+2026-03-25 14:26:08.367 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:26:08.368 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User - 200 null application/json; charset=utf-8 39.381ms
+2026-03-25 14:31:10.275 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/User - null null
+2026-03-25 14:31:10.276 [INF] CORS policy execution successful.
+2026-03-25 14:31:10.276 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/User - 204 null null 0.4727ms
+2026-03-25 14:31:10.278 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/User - null null
+2026-03-25 14:31:10.279 [INF] CORS policy execution successful.
+2026-03-25 14:31:10.279 [INF] Executing endpoint 'IlkProjem.API.Controllers.UserController.GetAllUsersAsync (IlkProjem.API)'
+2026-03-25 14:31:10.279 [INF] Route matched with {action = "GetAllUsers", controller = "User"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetAllUsersAsync(System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.UserController (IlkProjem.API).
+2026-03-25 14:31:10.290 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT u."Id", u."CreatedAt", u."Email", u."PasswordHash", u."ProfilePhotoId", u."Role", u."Username"
+FROM "Users" AS u
+2026-03-25 14:31:10.291 [INF] Executing OkObjectResult, writing value of type 'System.Linq.Enumerable+ListSelectIterator`2[[IlkProjem.Core.Models.User, IlkProjem.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[IlkProjem.Core.Dtos.UserDtos.UserDto, IlkProjem.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 14:31:10.291 [INF] Executed action IlkProjem.API.Controllers.UserController.GetAllUsersAsync (IlkProjem.API) in 11.363ms
+2026-03-25 14:31:10.291 [INF] Executed endpoint 'IlkProjem.API.Controllers.UserController.GetAllUsersAsync (IlkProjem.API)'
+2026-03-25 14:31:10.294 [INF] Executed DbCommand (2ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:31:10.294 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/User - 200 null application/json; charset=utf-8 16.1462ms
+2026-03-25 14:31:10.802 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Customer?sort=id&pageSize=10&lastId=0 - null null
+2026-03-25 14:31:10.802 [INF] CORS policy execution successful.
+2026-03-25 14:31:10.802 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Customer?sort=id&pageSize=10&lastId=0 - 204 null null 0.4422ms
+2026-03-25 14:31:10.803 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Customer?sort=id&pageSize=10&lastId=0 - null null
+2026-03-25 14:31:10.803 [INF] CORS policy execution successful.
+2026-03-25 14:31:10.804 [INF] Executing endpoint 'IlkProjem.API.Controllers.CustomerController.GetCustomers (IlkProjem.API)'
+2026-03-25 14:31:10.815 [INF] Route matched with {action = "GetCustomers", controller = "Customer"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetCustomers(IlkProjem.Core.Dtos.SpecificationDtos.CustomerSpecParams, System.Threading.CancellationToken) on controller IlkProjem.API.Controllers.CustomerController (IlkProjem.API).
+2026-03-25 14:31:10.853 [INF] Executed DbCommand (3ms) [Parameters=[@custParams_LastId='?' (DbType = Int32), @p2='?' (DbType = Int32), @p='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted") AND c."Id" > @custParams_LastId
+ORDER BY c."Id"
+LIMIT @p2 OFFSET @p
+2026-03-25 14:31:10.854 [INF] Executing OkObjectResult, writing value of type 'IlkProjem.Core.Utilities.Results.SuccessDataResult`1[[System.Collections.Generic.List`1[[IlkProjem.Core.Dtos.CustomerDtos.CustomerReadDto, IlkProjem.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:31:10.859 [INF] Executed action IlkProjem.API.Controllers.CustomerController.GetCustomers (IlkProjem.API) in 43.5667ms
+2026-03-25 14:31:10.859 [INF] Executed endpoint 'IlkProjem.API.Controllers.CustomerController.GetCustomers (IlkProjem.API)'
+2026-03-25 14:31:10.860 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:31:10.861 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Customer?sort=id&pageSize=10&lastId=0 - 200 null application/json; charset=utf-8 57.5245ms
+2026-03-25 14:31:11.605 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:31:11.605 [INF] Request starting HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:31:11.606 [INF] CORS policy execution successful.
+2026-03-25 14:31:11.606 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/system-stats - 204 null null 0.8304ms
+2026-03-25 14:31:11.606 [INF] CORS policy execution successful.
+2026-03-25 14:31:11.606 [INF] Request finished HTTP/1.1 OPTIONS http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 204 null null 0.6921ms
+2026-03-25 14:31:11.608 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - null null
+2026-03-25 14:31:11.608 [INF] CORS policy execution successful.
+2026-03-25 14:31:11.609 [INF] Request starting HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - null null
+2026-03-25 14:31:11.609 [INF] CORS policy execution successful.
+2026-03-25 14:31:11.609 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:31:11.609 [INF] Executing endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:31:11.609 [INF] Route matched with {action = "GetMonthlyRegistrations", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetMonthlyRegistrations(Int32) on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:31:11.609 [INF] Route matched with {action = "GetSystemStats", controller = "Calculator"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetSystemStats() on controller IlkProjem.API.Controllers.CalculatorController (IlkProjem.API).
+2026-03-25 14:31:11.611 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:31:11.612 [INF] Executing OkObjectResult, writing value of type 'System.Collections.Generic.List`1[[IlkProjem.BLL.Interfaces.MonthlyRegistrationDto, IlkProjem.BLL, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2026-03-25 14:31:11.612 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API) in 3.1733ms
+2026-03-25 14:31:11.613 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetMonthlyRegistrations (IlkProjem.API)'
+2026-03-25 14:31:11.617 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:31:11.618 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/monthly-registrations?months=6 - 200 null application/json; charset=utf-8 8.9728ms
+2026-03-25 14:31:11.622 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:31:11.624 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT c."Id", c."Balance", c."CreatedAt", c."CreatedBy", c."CreatedByUserId", c."DeletedAt", c."DeletedBy", c."DeletedByUserId", c."Email", c."IsActive", c."IsDeleted", c."Name", c."ProfileImageId", c."TcKimlikNo", c."UpdatedAt", c."UpdatedBy", c."UpdatedByUserId"
+FROM "Customers" AS c
+WHERE NOT (c."IsDeleted")
+2026-03-25 14:31:11.624 [INF] Executing OkObjectResult, writing value of type '<>f__AnonymousType2`4[[System.Int32, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.Decimal, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e],[System.DateTime, System.Private.CoreLib, Version=10.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2026-03-25 14:31:11.624 [INF] Executed action IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API) in 15.073ms
+2026-03-25 14:31:11.625 [INF] Executed endpoint 'IlkProjem.API.Controllers.CalculatorController.GetSystemStats (IlkProjem.API)'
+2026-03-25 14:31:11.626 [INF] Executed DbCommand (1ms) [Parameters=[@p0='?' (DbType = Int64), @p1='?', @p2='?', @p3='?', @p4='?', @p5='?', @p6='?', @p7='?' (DbType = Int32), @p8='?' (DbType = DateTime), @p9='?'], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO "ServiceLog" ("DurationMs", "Exception", "InternalErrorCode", "Method", "Path", "RequestBody", "ResponseBody", "StatusCode", "Timestamp", "UserId")
+VALUES (@p0, @p1, @p2, @p3, @p4, @p5, @p6, @p7, @p8, @p9)
+RETURNING "Id";
+2026-03-25 14:31:11.627 [INF] Request finished HTTP/1.1 GET http://localhost:5005/api/Calculator/system-stats - 200 null application/json; charset=utf-8 18.7503ms
+2026-03-25 14:37:33.776 [INF] Application is shutting down...

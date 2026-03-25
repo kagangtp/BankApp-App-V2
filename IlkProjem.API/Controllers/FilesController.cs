@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using IlkProjem.BLL.Services;
 using IlkProjem.Core.Dtos.FileDtos;
 using Microsoft.AspNetCore.Authorization;
+using IlkProjem.Core.Constants;
 
 namespace IlkProjem.API.Controllers;
 
@@ -17,6 +18,7 @@ public class FilesController : ControllerBase
         _filesService = filesService;
     }
 
+    [Authorize(Policy = Policies.FileManagement)]
     [HttpPost("upload")]
     public async Task<IActionResult> Upload(IFormFile file)
     {
@@ -27,6 +29,7 @@ public class FilesController : ControllerBase
         return Ok(new { success = true, data = result });
     }
 
+    [Authorize(Policy = Policies.FileManagement)]
     [HttpPut("{id}/assign")]
     public async Task<IActionResult> Assign(Guid id, [FromBody] FileAssignDto assignDto)
     {
@@ -59,6 +62,7 @@ public class FilesController : ControllerBase
         }
     }
 
+    [Authorize(Policy = Policies.FileManagement)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {

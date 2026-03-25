@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using IlkProjem.BLL.Interfaces;
 using IlkProjem.Core.Dtos.MailDtos;
 using Microsoft.AspNetCore.Authorization;
+using IlkProjem.Core.Constants;
 
 namespace IlkProjem.API.Controllers;
 
@@ -17,6 +18,7 @@ public class MailController : ControllerBase
         _mailService = mailService;
     }
 
+    [Authorize(Policy = Policies.AdminOnly)]
     [HttpPost("send")]
     public async Task<IActionResult> SendMail([FromBody] MailDto mailDto)
     {

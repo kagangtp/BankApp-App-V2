@@ -101,6 +101,26 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
+// --- 4b. AUTHORIZATION POLICIES ---
+builder.Services.AddAuthorization(options =>
+{
+    // Admin + Manager: Müşteri / Araç / Ev yönetimi
+    options.AddPolicy(IlkProjem.Core.Constants.Policies.CustomerManagement, policy =>
+        policy.RequireRole(IlkProjem.Core.Constants.Roles.Admin, IlkProjem.Core.Constants.Roles.Manager));
+
+    // Sadece Admin
+    options.AddPolicy(IlkProjem.Core.Constants.Policies.AdminOnly, policy =>
+        policy.RequireRole(IlkProjem.Core.Constants.Roles.Admin));
+
+    // Sadece Admin: Kullanıcı yönetimi
+    options.AddPolicy(IlkProjem.Core.Constants.Policies.UserManagement, policy =>
+        policy.RequireRole(IlkProjem.Core.Constants.Roles.Admin));
+
+    // Admin + Manager: Dosya yönetimi
+    options.AddPolicy(IlkProjem.Core.Constants.Policies.FileManagement, policy =>
+        policy.RequireRole(IlkProjem.Core.Constants.Roles.Admin, IlkProjem.Core.Constants.Roles.Manager));
+});
+
 // --- 5. RATE LIMITING ---
 builder.Services.AddRateLimiter(options =>
 {
@@ -166,6 +186,11 @@ builder.Services.AddCors(options =>
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
+    .WriteTo.File(
+        path: "Logs/app-.log",
+        rollingInterval: RollingInterval.Day,
+        retainedFileCountLimit: 31,
+        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
     .WriteTo.PostgreSQL(connectionString, "ServiceLog") 
     .CreateLogger();
 
@@ -176,6 +201,7 @@ var app = builder.Build();
 // --- 8. MIDDLEWARE ---
 var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
 app.UseRequestLocalization(locOptions.Value);
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {
