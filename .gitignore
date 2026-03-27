@@ -3,3 +3,7 @@
 **/publish/
 
 *.code-workspace
+
+**/Logs/
+**/logs/
+*.log

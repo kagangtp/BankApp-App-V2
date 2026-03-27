@@ -8,4 +8,6 @@ public interface IUserService
     Task<UserDto?> GetUserByIdAsync(int id, CancellationToken ct = default);
     Task<UserDto> UpdateUserAsync(int id, UserUpdateDto userUpdateDto, CancellationToken ct = default);
     Task<bool> DeleteUserAsync(int id, CancellationToken ct = default);
+    Task<UserDto> PromoteUserAsync(int id, CancellationToken ct = default);
+    Task<UserDto> DemoteUserAsync(int id, CancellationToken ct = default);
 }

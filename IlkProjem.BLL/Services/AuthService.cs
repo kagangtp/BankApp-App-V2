@@ -13,6 +13,7 @@ using IlkProjem.Core.Utilities.Results;
 using Microsoft.Extensions.Localization;
 using IlkProjem.Core.Resources;
 using IlkProjem.DAL.Interfaces;
+using IlkProjem.Core.Constants;
 
 namespace IlkProjem.BLL.Services;
 
@@ -178,6 +179,13 @@ public class AuthService : IAuthService
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, user.Role ?? "No Role")
         };
+
+        // Role-Permission mappinginden yetkileri çek ve claim olarak ekle
+        var userPermissions = RolePermissions.GetPermissionsForRole(user.Role ?? Roles.Guest);
+        foreach (var permission in userPermissions)
+        {
+            claims.Add(new Claim("permissions", permission));
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {

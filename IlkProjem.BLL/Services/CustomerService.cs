@@ -7,17 +7,22 @@ using Microsoft.Extensions.Localization;
 using IlkProjem.Core.Resources;
 using IlkProjem.Core.Dtos.SpecificationDtos;
 using FluentValidation;
+using Microsoft.AspNetCore.SignalR;
+using IlkProjem.Core.Hubs;
+using IlkProjem.Core.Interfaces;
 
 namespace IlkProjem.BLL.Services;
 
 public class CustomerService : ICustomerService
 {
     private readonly ICustomerRepository _repository;
+    private readonly IHubContext<NotificationHub> _hubContext;
     private readonly IStringLocalizer<Messages> _localizer;
     private readonly IValidator<CustomerCreateDto> _createValidator;
     private readonly IValidator<CustomerUpdateDto> _updateValidator;
     private readonly IValidator<CustomerDeleteDto> _deleteValidator;
     private readonly IFilesService _filesService;
+    private readonly ICurrentUserService _currentUserService;
 
     public CustomerService(
         ICustomerRepository repository,
@@ -25,7 +30,9 @@ public class CustomerService : ICustomerService
         IValidator<CustomerCreateDto> createValidator,
         IValidator<CustomerUpdateDto> updateValidator,
         IValidator<CustomerDeleteDto> deleteValidator,
-        IFilesService filesService)
+        IFilesService filesService,
+        IHubContext<NotificationHub> hubContext,
+        ICurrentUserService currentUserService)
     {
         _repository = repository;
         _localizer = localizer;
@@ -33,6 +40,8 @@ public class CustomerService : ICustomerService
         _updateValidator = updateValidator;
         _deleteValidator = deleteValidator;
         _filesService = filesService;
+        _hubContext = hubContext;
+        _currentUserService = currentUserService;
     }
 
     public async Task<IResult> AddCustomer(CustomerCreateDto createDto, CancellationToken ct = default)
@@ -46,6 +55,14 @@ public class CustomerService : ICustomerService
 
         var customer = new Customer { Name = createDto.Name, Email = createDto.Email };
         await _repository.AddAsync(customer, ct);
+
+        // --- SIGNALR BİLDİRİMİ ---
+        var userName = _currentUserService.UserName ?? "Sistem"; // JWT'den gelen kullanıcı adı
+        await _hubContext.Clients.All.SendAsync("ReceiveNotification", new {
+            User = userName,
+            Action = "CustomerCreated",
+            Message = $"{userName} yeni bir müşteri ekledi: {createDto.Name}"
+        });
         
         return new SuccessResult(_localizer["CustomerAdded"]); 
     }

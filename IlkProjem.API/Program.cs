@@ -101,26 +101,28 @@ builder.Services.AddAuthentication(x =>
     };
 });
 
-// --- 4b. AUTHORIZATION POLICIES ---
+// --- 4b. AUTHORIZATION POLICIES (PBAC GÜNCELLEMESİ) ---
 builder.Services.AddAuthorization(options =>
 {
-    // Admin + Manager: Müşteri / Araç / Ev yönetimi
+    // Admin + Manager rollerinin yapabildiği işlemleri spesifik yetkilere bağlıyoruz.
+    // RequireClaim("permissions", ...) kullanımı: Kullanıcının "permissions" claim'i olmalı 
+    // ve değeri bu dizideki yetkilerden EN AZ BİRİYLE eşleşmeli.
+    
     options.AddPolicy(IlkProjem.Core.Constants.Policies.CustomerManagement, policy =>
-        policy.RequireRole(IlkProjem.Core.Constants.Roles.Admin, IlkProjem.Core.Constants.Roles.Manager));
+        policy.RequireClaim("permissions", "Customers.View", "Customers.Create", "Customers.Edit", "Customers.Delete"));
 
-    // Sadece Admin
+    // Sadece Admin'in yapabildiği, sistemsel yetkiler
     options.AddPolicy(IlkProjem.Core.Constants.Policies.AdminOnly, policy =>
-        policy.RequireRole(IlkProjem.Core.Constants.Roles.Admin));
+        policy.RequireClaim("permissions", "System.Manage"));
 
-    // Sadece Admin: Kullanıcı yönetimi
+    // Kullanıcı yönetimi yetkileri
     options.AddPolicy(IlkProjem.Core.Constants.Policies.UserManagement, policy =>
-        policy.RequireRole(IlkProjem.Core.Constants.Roles.Admin));
+        policy.RequireClaim("permissions", "Users.View", "Users.Create", "Users.Edit", "Users.Delete"));
 
-    // Admin + Manager: Dosya yönetimi
+    // Dosya/Asset yönetimi yetkileri
     options.AddPolicy(IlkProjem.Core.Constants.Policies.FileManagement, policy =>
-        policy.RequireRole(IlkProjem.Core.Constants.Roles.Admin, IlkProjem.Core.Constants.Roles.Manager));
+        policy.RequireClaim("permissions", "Files.Upload", "Files.Delete", "Files.View"));
 });
-
 // --- 5. RATE LIMITING ---
 builder.Services.AddRateLimiter(options =>
 {
@@ -144,6 +146,10 @@ builder.Services.AddRateLimiter(options =>
     
     options.RejectionStatusCode = 429;
 });
+
+// --- 5b. SIGNALR SETUP ---
+builder.Services.AddSignalR();
+
 
 builder.Services.AddHttpContextAccessor();
 
@@ -221,6 +227,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseHttpsRedirection();
+app.MapHub<IlkProjem.Core.Hubs.NotificationHub>("/notification-hub");
 app.MapControllers().RequireRateLimiting("PerUser");
 
 // --- 9. DATABASE MIGRATION & SEED DATA ---

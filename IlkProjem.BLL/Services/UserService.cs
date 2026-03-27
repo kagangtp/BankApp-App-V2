@@ -75,4 +75,62 @@ public class UserService : IUserService
         _userRepository.Delete(user);
         return await _userRepository.SaveChangesAsync(ct);
     }
+
+    public async Task<UserDto> PromoteUserAsync(int id, CancellationToken ct = default)
+    {
+        var user = await _userRepository.GetByIdAsync(id, ct);
+        if (user == null)
+            throw new BusinessException(IlkProjem.Core.Enums.BusinessErrorCode.UserNotFound, $"User with ID {id} not found.");
+
+        // Staff -> Manager -> Admin
+        if (string.IsNullOrEmpty(user.Role) || user.Role == IlkProjem.Core.Constants.Roles.Staff)
+        {
+            user.Role = IlkProjem.Core.Constants.Roles.Manager;
+        }
+        else if (user.Role == IlkProjem.Core.Constants.Roles.Manager)
+        {
+            user.Role = IlkProjem.Core.Constants.Roles.Admin;
+        }
+
+        _userRepository.Update(user);
+        await _userRepository.SaveChangesAsync(ct);
+
+        return new UserDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            Role = user.Role,
+            CreatedAt = user.CreatedAt
+        };
+    }
+
+    public async Task<UserDto> DemoteUserAsync(int id, CancellationToken ct = default)
+    {
+        var user = await _userRepository.GetByIdAsync(id, ct);
+        if (user == null)
+            throw new BusinessException(IlkProjem.Core.Enums.BusinessErrorCode.UserNotFound, $"User with ID {id} not found.");
+
+        // Admin -> Manager -> Staff
+        if (user.Role == IlkProjem.Core.Constants.Roles.Admin)
+        {
+            user.Role = IlkProjem.Core.Constants.Roles.Manager;
+        }
+        else if (user.Role == IlkProjem.Core.Constants.Roles.Manager)
+        {
+            user.Role = IlkProjem.Core.Constants.Roles.Staff;
+        }
+
+        _userRepository.Update(user);
+        await _userRepository.SaveChangesAsync(ct);
+
+        return new UserDto
+        {
+            Id = user.Id,
+            Username = user.Username,
+            Email = user.Email,
+            Role = user.Role,
+            CreatedAt = user.CreatedAt
+        };
+    }
 }

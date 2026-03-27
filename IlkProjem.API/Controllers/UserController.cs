@@ -68,4 +68,20 @@ public class UserController : ControllerBase
 
         return NoContent();
     }
+
+    [Authorize(Policy = Policies.UserManagement)]
+    [HttpPut("{id}/promote")]
+    public async Task<IActionResult> PromoteUserAsync(int id, CancellationToken ct)
+    {
+        var user = await _userService.PromoteUserAsync(id, ct);
+        return Ok(user);
+    }
+
+    [Authorize(Policy = Policies.UserManagement)]
+    [HttpPut("{id}/demote")]
+    public async Task<IActionResult> DemoteUserAsync(int id, CancellationToken ct)
+    {
+        var user = await _userService.DemoteUserAsync(id, ct);
+        return Ok(user);
+    }
 }
