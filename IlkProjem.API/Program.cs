@@ -226,7 +226,11 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseHttpsRedirection();
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+}
+
 app.MapHub<IlkProjem.Core.Hubs.NotificationHub>("/notification-hub");
 app.MapControllers().RequireRateLimiting("PerUser");
 
