@@ -99,6 +99,19 @@ builder.Services.AddAuthentication(x =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         ValidateLifetime = true
     };
+    x.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notification-hub"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // --- 4b. AUTHORIZATION POLICIES (PBAC GÜNCELLEMESİ) ---
