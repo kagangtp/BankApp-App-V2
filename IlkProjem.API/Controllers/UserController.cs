@@ -33,7 +33,7 @@ public class UserController : ControllerBase
         return Ok(user);
     }
 
-    [Authorize(Policy = Policies.UserManagement)]
+    [Authorize] // Sadece giriş yapmış olmak yeterli, böylece herkes chat yapabilir.
     [HttpGet]
     public async Task<IActionResult> GetAllUsersAsync(CancellationToken ct)
     {

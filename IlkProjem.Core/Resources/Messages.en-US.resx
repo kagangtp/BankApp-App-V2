@@ -27,4 +27,13 @@
   <data name="ApiDescription" xml:space="preserve">
     <value>IlkProjem API Description</value>
   </data>
+  <data name="CustomerCreatedNotification" xml:space="preserve">
+    <value>{0} added a new customer: {1}</value>
+  </data>
+  <data name="CustomerUpdatedNotification" xml:space="preserve">
+    <value>{0} updated a customer: {1}</value>
+  </data>
+  <data name="CustomerDeletedNotification" xml:space="preserve">
+    <value>{0} deleted a customer: {1}</value>
+  </data>
 </root>

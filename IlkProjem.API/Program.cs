@@ -20,6 +20,19 @@ using FluentValidation;
 using IlkProjem.BLL.Interfaces;
 using IlkProjem.DAL.Interfaces;
 using Supabase; // 1. ADIM: Supabase kütüphanesini ekle
+using IlkProjem.Core.Constants;
+using IlkProjem.Core.Constants;
+
+string logo = @"
+ '||''|.                    '||          |                        
+  ||   ||   ....   .. ...    ||  ..     |||    ... ...   ... ...  
+  ||'''|.  '' .||   ||  ||   || .'     |  ||    ||'  ||   ||'  || 
+  ||    || .|' ||   ||  ||   ||'|.    .''''|.   ||    |   ||    | 
+ .||...|'  '|..'|' .||. ||. .||. ||. .|.  .||.  ||...'    ||...'  
+                                                ||        ||      
+                                               ''''      ''''     ";
+
+Console.WriteLine(logo);
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,20 +134,31 @@ builder.Services.AddAuthorization(options =>
     // RequireClaim("permissions", ...) kullanımı: Kullanıcının "permissions" claim'i olmalı 
     // ve değeri bu dizideki yetkilerden EN AZ BİRİYLE eşleşmeli.
     
-    options.AddPolicy(IlkProjem.Core.Constants.Policies.CustomerManagement, policy =>
-        policy.RequireClaim("permissions", "Customers.View", "Customers.Create", "Customers.Edit", "Customers.Delete"));
+    options.AddPolicy(Policies.CustomerManagement, policy =>
+        policy.RequireClaim("permissions", 
+            Permissions.Customers.View, 
+            Permissions.Customers.Create, 
+            Permissions.Customers.Edit, 
+            Permissions.Customers.Delete));
 
     // Sadece Admin'in yapabildiği, sistemsel yetkiler
-    options.AddPolicy(IlkProjem.Core.Constants.Policies.AdminOnly, policy =>
-        policy.RequireClaim("permissions", "System.Manage"));
+    options.AddPolicy(Policies.AdminOnly, policy =>
+        policy.RequireClaim("permissions", Permissions.System.Manage));
 
     // Kullanıcı yönetimi yetkileri
-    options.AddPolicy(IlkProjem.Core.Constants.Policies.UserManagement, policy =>
-        policy.RequireClaim("permissions", "Users.View", "Users.Create", "Users.Edit", "Users.Delete"));
+    options.AddPolicy(Policies.UserManagement, policy =>
+        policy.RequireClaim("permissions", 
+            Permissions.Users.View, 
+            Permissions.Users.Create, 
+            Permissions.Users.Edit, 
+            Permissions.Users.Delete));
 
     // Dosya/Asset yönetimi yetkileri
-    options.AddPolicy(IlkProjem.Core.Constants.Policies.FileManagement, policy =>
-        policy.RequireClaim("permissions", "Files.Upload", "Files.Delete", "Files.View"));
+    options.AddPolicy(Policies.FileManagement, policy =>
+        policy.RequireClaim("permissions", 
+            Permissions.Files.Upload, 
+            Permissions.Files.Delete, 
+            Permissions.Files.View));
 });
 // --- 5. RATE LIMITING ---
 builder.Services.AddRateLimiter(options =>

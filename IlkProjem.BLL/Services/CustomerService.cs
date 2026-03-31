@@ -61,7 +61,7 @@ public class CustomerService : ICustomerService
         await _hubContext.Clients.All.SendAsync("ReceiveNotification", new {
             User = userName,
             Action = "CustomerCreated",
-            Message = $"{userName} yeni bir müşteri ekledi: {createDto.Name}"
+            Message = _localizer["CustomerCreatedNotification", userName, createDto.Name].Value
         });
         
         return new SuccessResult(_localizer["CustomerAdded"]); 
@@ -126,6 +126,15 @@ public class CustomerService : ICustomerService
         existingCustomer.TcKimlikNo = updateDto.TcKimlikNo;
 
         await _repository.UpdateAsync(existingCustomer, ct);
+
+        // --- SIGNALR BİLDİRİMİ ---
+        var userName = _currentUserService.UserName ?? "Sistem";
+        await _hubContext.Clients.All.SendAsync("ReceiveNotification", new {
+            User = userName,
+            Action = "CustomerUpdated",
+            Message = _localizer["CustomerUpdatedNotification", userName, updateDto.Name].Value
+        });
+
         return new SuccessResult(_localizer["CustomerUpdated"]);
     }
 
@@ -138,8 +147,20 @@ public class CustomerService : ICustomerService
             return new ErrorResult(errors);
         }
 
+        // Silinen müşterinin adını bulalım ki bildirimde gösterelim
+        var existingCustomer = await _repository.GetByIdAsync(deleteDto.Id, ct);
+        var customerName = existingCustomer?.Name ?? $"ID:{deleteDto.Id}";
+
         var deleted = await _repository.DeleteAsync(deleteDto.Id, ct);
         if (!deleted) return new ErrorResult(_localizer["DeleteError"]);
+
+        // --- SIGNALR BİLDİRİMİ ---
+        var userName = _currentUserService.UserName ?? "Sistem";
+        await _hubContext.Clients.All.SendAsync("ReceiveNotification", new {
+            User = userName,
+            Action = "CustomerDeleted",
+            Message = _localizer["CustomerDeletedNotification", userName, customerName].Value
+        });
 
         return new SuccessResult(_localizer["CustomerDeleted"]);
     }

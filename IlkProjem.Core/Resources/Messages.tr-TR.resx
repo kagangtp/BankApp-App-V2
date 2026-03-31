@@ -27,5 +27,13 @@
   <data name="ApiDescription" xml:space="preserve">
     <value>IlkProjem API Açıklaması</value>
   </data>
-
+  <data name="CustomerCreatedNotification" xml:space="preserve">
+    <value>{0} yeni bir müşteri ekledi: {1}</value>
+  </data>
+  <data name="CustomerUpdatedNotification" xml:space="preserve">
+    <value>{0} adlı kullanıcı bir müşteriyi güncelledi: {1}</value>
+  </data>
+  <data name="CustomerDeletedNotification" xml:space="preserve">
+    <value>{0} adlı kullanıcı bir müşteriyi sildi: {1}</value>
+  </data>
 </root>
