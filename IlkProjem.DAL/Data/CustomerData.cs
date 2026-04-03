@@ -22,6 +22,7 @@ public class AppDbContext : DbContext
     public DbSet<House> Houses => Set<House>();
     public DbSet<Car> Cars => Set<Car>();
     public DbSet<ServiceLog> ServiceLog => Set<ServiceLog>();
+    public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,6 +59,14 @@ public class AppDbContext : DbContext
                   .OnDelete(DeleteBehavior.Cascade);
 
             entity.HasIndex(rt => rt.Token).IsUnique();
+        });
+
+        // 5. ChatMessage Tablosu
+        modelBuilder.Entity<ChatMessage>(entity =>
+        {
+            entity.ToTable("ChatMessages");
+            entity.HasIndex(e => new { e.SenderId, e.ReceiverId }); // Konuşma sorguları için
+            entity.HasIndex(e => e.SentAt);                         // Sıralama için
         });
     }
 }
