@@ -210,6 +210,10 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 builder.Services.AddScoped<IChatService, ChatService>();
 
+// AI Chat DI Registrations
+builder.Services.AddScoped<IAiChatMessageRepository, AiChatMessageRepository>();
+builder.Services.AddHttpClient<IAiChatService, AiChatService>();
+
 builder.Services.AddValidatorsFromAssemblyContaining<IlkProjem.BLL.ValidationRules.FluentValidation.CustomerDtoValidators.CustomerCreateDtoValidator>();
 
 builder.Services.AddControllers()

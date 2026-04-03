@@ -23,6 +23,7 @@ public class AppDbContext : DbContext
     public DbSet<Car> Cars => Set<Car>();
     public DbSet<ServiceLog> ServiceLog => Set<ServiceLog>();
     public DbSet<ChatMessage> ChatMessages => Set<ChatMessage>();
+    public DbSet<AiChatMessage> AiChatMessages => Set<AiChatMessage>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -67,6 +68,14 @@ public class AppDbContext : DbContext
             entity.ToTable("ChatMessages");
             entity.HasIndex(e => new { e.SenderId, e.ReceiverId }); // Konuşma sorguları için
             entity.HasIndex(e => e.SentAt);                         // Sıralama için
+        });
+
+        // 6. AiChatMessage Tablosu
+        modelBuilder.Entity<AiChatMessage>(entity =>
+        {
+            entity.ToTable("AiChatMessages");
+            entity.HasIndex(e => e.UserId);  // Kullanıcı bazlı sorgular için
+            entity.HasIndex(e => e.SentAt);   // Sıralama için
         });
     }
 }
