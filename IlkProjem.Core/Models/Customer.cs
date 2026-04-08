@@ -7,6 +7,7 @@ public class Customer : BaseEntity
     public string? Email { get; set; }
     public decimal Balance { get; set; }
     public string? TcKimlikNo { get; set; } //T.C. Kimlik Numarası
+    public DateTime? BirthDate { get; set; }
 
     // --- DOSYA BAĞLANTISI BURADA BAŞLIYOR ---
     

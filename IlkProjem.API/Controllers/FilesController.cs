@@ -3,6 +3,7 @@ using IlkProjem.BLL.Services;
 using IlkProjem.Core.Dtos.FileDtos;
 using Microsoft.AspNetCore.Authorization;
 using IlkProjem.Core.Constants;
+using IlkProjem.BLL.Interfaces;
 
 namespace IlkProjem.API.Controllers;
 
@@ -23,10 +24,17 @@ public class FilesController : ControllerBase
     public async Task<IActionResult> Upload(IFormFile file)
     {
         if (file == null || file.Length == 0)
-            return BadRequest("Dosya seçilmedi.");
+            return BadRequest(new { success = false, message = "Dosya seçilmedi." });
 
-        var result = await _filesService.UploadAsync(file);
-        return Ok(new { success = true, data = result });
+        try
+        {
+            var result = await _filesService.UploadAsync(file);
+            return Ok(new { success = true, data = result });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { success = false, message = "Resim yükleme hatası: " + ex.Message });
+        }
     }
 
     [Authorize(Policy = Policies.FileManagement)]

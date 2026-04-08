@@ -11,6 +11,7 @@ public interface IFilesRepository
     void Update(Files file);
     void Delete(Files file);
     Task<Files?> GetByHashAsync(string hash);
+    Task<Files?> GetOrphanByHashAsync(string hash);
     Task<int> CountByPathAsync(string relativePath);
     Task SaveChangesAsync();
 }

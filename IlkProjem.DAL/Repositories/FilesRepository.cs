@@ -63,4 +63,11 @@ public class FilesRepository : IFilesRepository
         return await _context.Files.CountAsync(f => f.RelativePath == relativePath);
     }
 
+    public async Task<Files?> GetOrphanByHashAsync(string hash)
+    {
+        // Hash'i aynı olan ama sahibi olmayan (boşta) bir dosya var mı?
+        return await _context.Files
+            .FirstOrDefaultAsync(f => f.FileHash == hash && f.OwnerId == null);
+    }
+
 }

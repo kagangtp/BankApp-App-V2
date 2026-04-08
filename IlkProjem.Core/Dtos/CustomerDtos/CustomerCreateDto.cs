@@ -6,4 +6,5 @@ public class CustomerCreateDto
     // Id göndermiyoruz çünkü veritabanı otomatik oluşturacak
     public required string Name { get; set; }
     public string? Email { get; set; }
+    public DateTime? BirthDate { get; set; }
 }

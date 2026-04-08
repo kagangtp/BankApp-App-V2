@@ -19,20 +19,14 @@ using Serilog;
 using FluentValidation;
 using IlkProjem.BLL.Interfaces;
 using IlkProjem.DAL.Interfaces;
-using Supabase; // 1. ADIM: Supabase kütüphanesini ekle
 using IlkProjem.Core.Constants;
-using IlkProjem.Core.Constants;
+using Quartz;
+using IlkProjem.BLL.Jobs;
+using IlkProjem.API.Helpers;
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
 
-string logo = @"
- '||''|.                    '||          |                        
-  ||   ||   ....   .. ...    ||  ..     |||    ... ...   ... ...  
-  ||'''|.  '' .||   ||  ||   || .'     |  ||    ||'  ||   ||'  || 
-  ||    || .|' ||   ||  ||   ||'|.    .''''|.   ||    |   ||    | 
- .||...|'  '|..'|' .||. ||. .||. ||. .|.  .||.  ||...'    ||...'  
-                                                ||        ||      
-                                               ''''      ''''     ";
-
-Console.WriteLine(logo);
+BannerHelper.PrintLogo();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -81,13 +75,31 @@ builder.Services.AddDbContext<AppDbContext>((sp, options) =>
     options.UseNpgsql(connectionString)
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
-// 2. ADIM: Supabase Client Kaydı
-// appsettings.json içindeki "Supabase:Url" ve "Supabase:Key" değerlerini okur
-var supabaseUrl = builder.Configuration["Supabase:Url"];
-var supabaseKey = builder.Configuration["Supabase:Key"];
+// Supabase Client completely removed
 
-builder.Services.AddSingleton(provider => 
-    new Supabase.Client(supabaseUrl, supabaseKey, new SupabaseOptions { AutoConnectRealtime = true }));
+// --- 3b. REDIS & HYBRID CACHE SETUP ---
+// Redis bağlantı cümlesini al (DB bağlantısı gibi çevresel değişken desteği ekledim)
+var redisConnection = builder.Configuration.GetConnectionString("RedisConnection") 
+                      ?? Environment.GetEnvironmentVariable("REDIS_URL") 
+                      ?? "localhost:6379";
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConnection;
+    options.InstanceName = "IlkProjem_";
+});
+
+// .NET 10 ile gelen gelişmiş önbellekleme servisi
+builder.Services.AddHybridCache(options =>
+{
+    // Varsayılan cache süresi (örneğin 1 saat)
+    options.DefaultEntryOptions = new HybridCacheEntryOptions
+    {
+        Expiration = TimeSpan.FromHours(1),
+        LocalCacheExpiration = TimeSpan.FromMinutes(5) // L1 (Bellek) süresi
+    };
+});
+
 
 // --- 4. AUTHENTICATION & JWT ---
 var keyString = builder.Configuration["Jwt:Key"] ?? "fallback_secret_key_32_characters_long";
@@ -199,7 +211,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<ICalculatorService, CalculatorService>();
 builder.Services.AddScoped<IExcelService, ExcelService>();
-builder.Services.AddScoped<IFilesService, FilesService>(); // Bu artık Supabase kullanacak
+builder.Services.AddScoped<IFilesService, FilesService>(); // Bu artık Native Google Cloud kullanacak
 builder.Services.AddScoped<IFilesRepository, FilesRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<ICarService, CarService>();
@@ -213,6 +225,24 @@ builder.Services.AddScoped<IChatService, ChatService>();
 // AI Chat DI Registrations
 builder.Services.AddScoped<IAiChatMessageRepository, AiChatMessageRepository>();
 builder.Services.AddHttpClient<IAiChatService, AiChatService>();
+
+// --- 5c. QUARTZ SCHEDULER SETUP ---
+builder.Services.AddQuartz(quartz =>
+{
+    // İş tanımı
+    var jobKey = new JobKey("DailyMailJob");
+    quartz.AddJob<DailyMailJob>(opts => opts.WithIdentity(jobKey));
+
+    // Tetikleyici tanımı (Her sabah 09:00:00)
+    quartz.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("DailyMailJob-Trigger")
+        .WithCronSchedule("0 0 9 * * ?") // TEST: Her dakika çalışır (Eski hâli: 0 0 9 * * ?)
+    );
+});
+
+// Quartz servisinin arka planda çalışmasını sağlar
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 builder.Services.AddValidatorsFromAssemblyContaining<IlkProjem.BLL.ValidationRules.FluentValidation.CustomerDtoValidators.CustomerCreateDtoValidator>();
 

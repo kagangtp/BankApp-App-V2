@@ -7,3 +7,9 @@
 **/Logs/
 **/logs/
 *.log
+
+# Terraform
+.terraform/
+*.tfstate*
+*.tfvars
+.terraform.lock.hcl

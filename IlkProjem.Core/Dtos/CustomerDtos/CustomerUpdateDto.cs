@@ -9,4 +9,5 @@ public class CustomerUpdateDto
     // Solid NO IRL: A mistake to include Balance in the update DTO, but we will ignore this for now
     public decimal Balance { get; set; }
     public string? TcKimlikNo { get; set; }
+    public DateTime? BirthDate { get; set; }
 }
