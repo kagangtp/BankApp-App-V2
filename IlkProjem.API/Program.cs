@@ -75,43 +75,34 @@ builder.Services.AddDbContext<AppDbContext>((sp, options) =>
     options.UseNpgsql(connectionString)
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
-// --- 3b. REDIS SETUP (BULLETPROOF VERSION) ---
-string? redisConfig = null;
-
-// 1. Önce en garanti yol olan tekil değişkenleri dene
+// --- 3b. REDIS SETUP (SON VE KESİN DOKUNUŞ) ---
 var rHost = Environment.GetEnvironmentVariable("REDISHOST");
 var rPort = Environment.GetEnvironmentVariable("REDISPORT");
 var rPass = Environment.GetEnvironmentVariable("REDISPASSWORD");
 
+string redisConfig;
+
 if (!string.IsNullOrEmpty(rHost))
 {
-    redisConfig = $"{rHost}:{rPort},password={rPass},abortConnect=false,ssl=false";
+    // Railway ortamı: Şifre varsa ekle, yoksa ekleme (bazı internal redisler şifresiz olabilir)
+    redisConfig = string.IsNullOrEmpty(rPass) 
+        ? $"{rHost}:{rPort},abortConnect=false,ssl=false" 
+        : $"{rHost}:{rPort},password={rPass},abortConnect=false,ssl=false";
 }
-
-// 2. Eğer yukarıdakiler yoksa REDIS_URL'i dene ve temizle
-if (string.IsNullOrEmpty(redisConfig))
+else
 {
-    var rUrl = Environment.GetEnvironmentVariable("REDIS_URL");
-    if (!string.IsNullOrEmpty(rUrl))
-    {
-        if (rUrl.StartsWith("redis://"))
-        {
-            var uri = new Uri(rUrl);
-            var password = uri.UserInfo.Contains(':') ? uri.UserInfo.Split(':')[1] : uri.UserInfo;
-            redisConfig = $"{uri.Host}:{uri.Port},password={password},abortConnect=false,ssl=false";
-        }
-        else
-        {
-            redisConfig = rUrl;
-        }
-    }
-}
-
-// 3b.a. Hiçbiri yoksa Local/Appsettings dene
-if (string.IsNullOrEmpty(redisConfig))
-{
+    // Local ortamı
     redisConfig = builder.Configuration.GetConnectionString("RedisConnection") ?? "localhost:6379";
 }
+
+// Logun altına şu satırı ekle ki şifrenin gelip gelmediğini görelim
+Console.WriteLine($"[REDIS DEBUG]: Host: {rHost}, Port: {rPort}, HasPassword: {!string.IsNullOrEmpty(rPass)}");
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = redisConfig;
+    options.InstanceName = "IlkProjem_";
+});
 
 // Debug için (Loglarda şifreyi gizleyerek adresi gör)
 Console.WriteLine($"[REDIS CONFIG]: {redisConfig.Split(',')[0]} (Password hidden)");
