@@ -144,6 +144,19 @@ builder.Services.AddAuthentication(x =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         ValidateLifetime = true
     };
+    x.Events = new JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            var accessToken = context.Request.Query["access_token"];
+            var path = context.HttpContext.Request.Path;
+            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notification-hub"))
+            {
+                context.Token = accessToken;
+            }
+            return Task.CompletedTask;
+        }
+    };
 });
 
 // --- 4b. AUTHORIZATION POLICIES ---
@@ -169,6 +182,17 @@ builder.Services.AddRateLimiter(options =>
             Window = TimeSpan.FromSeconds(1),
             QueueLimit = 0
         }));
+
+    options.AddPolicy("PerUser", httpContext =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 1000,
+                Window = TimeSpan.FromMinutes(1),
+                QueueLimit = 0
+            }));
+
     options.RejectionStatusCode = 429;
 });
 
@@ -261,7 +285,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.MapHub<IlkProjem.Core.Hubs.NotificationHub>("/notification-hub");
-app.MapControllers().RequireRateLimiting("Global");
+app.MapControllers().RequireRateLimiting("PerUser");
 
 // --- 9. DATABASE MIGRATION & SEED DATA ---
 using (var scope = app.Services.CreateScope())
