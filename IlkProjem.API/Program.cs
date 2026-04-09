@@ -75,23 +75,20 @@ builder.Services.AddDbContext<AppDbContext>((sp, options) =>
     options.UseNpgsql(connectionString)
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
-// Supabase Client completely removed
-
-// --- 3b. REDIS & HYBRID CACHE SETUP ---
-var redisUrl = Environment.GetEnvironmentVariable("REDIS_URL");
+// --- 3b. REDIS & HYBRID CACHE SETUP (GÜNCELLENDİ) ---
+var redisHost = Environment.GetEnvironmentVariable("REDISHOST");
+var redisPort = Environment.GetEnvironmentVariable("REDISPORT");
+var redisPassword = Environment.GetEnvironmentVariable("REDISPASSWORD");
 string redisConfig;
 
-if (!string.IsNullOrEmpty(redisUrl))
+if (!string.IsNullOrEmpty(redisHost))
 {
-    // Railway'in verdiği "redis://default:password@host:port" formatını parse ediyoruz
-    var uri = new Uri(redisUrl);
-    var password = uri.UserInfo.Split(':')[1];
-    // StackExchange.Redis'in anladığı format: "host:port,password=xxx"
-    redisConfig = $"{uri.Host}:{uri.Port},password={password}";
+    // Railway Internal Network Bağlantısı
+    redisConfig = $"{redisHost}:{redisPort},password={redisPassword},abortConnect=false";
 }
 else
 {
-    // Localde çalışırken appsettings'ten oku veya default localhost kullan
+    // Local Fallback
     redisConfig = builder.Configuration.GetConnectionString("RedisConnection") ?? "localhost:6379";
 }
 
@@ -99,6 +96,15 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redisConfig;
     options.InstanceName = "IlkProjem_";
+});
+
+builder.Services.AddHybridCache(options =>
+{
+    options.DefaultEntryOptions = new HybridCacheEntryOptions
+    {
+        Expiration = TimeSpan.FromHours(1),
+        LocalCacheExpiration = TimeSpan.FromMinutes(5)
+    };
 });
 
 
