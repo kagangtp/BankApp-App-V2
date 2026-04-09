@@ -78,26 +78,27 @@ builder.Services.AddDbContext<AppDbContext>((sp, options) =>
 // Supabase Client completely removed
 
 // --- 3b. REDIS & HYBRID CACHE SETUP ---
-// Redis bağlantı cümlesini al (DB bağlantısı gibi çevresel değişken desteği ekledim)
-var redisConnection = builder.Configuration.GetConnectionString("RedisConnection") 
-                      ?? Environment.GetEnvironmentVariable("REDIS_URL") 
-                      ?? "localhost:6379";
+var redisUrl = Environment.GetEnvironmentVariable("REDIS_URL");
+string redisConfig;
+
+if (!string.IsNullOrEmpty(redisUrl))
+{
+    // Railway'in verdiği "redis://default:password@host:port" formatını parse ediyoruz
+    var uri = new Uri(redisUrl);
+    var password = uri.UserInfo.Split(':')[1];
+    // StackExchange.Redis'in anladığı format: "host:port,password=xxx"
+    redisConfig = $"{uri.Host}:{uri.Port},password={password}";
+}
+else
+{
+    // Localde çalışırken appsettings'ten oku veya default localhost kullan
+    redisConfig = builder.Configuration.GetConnectionString("RedisConnection") ?? "localhost:6379";
+}
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
-    options.Configuration = redisConnection;
+    options.Configuration = redisConfig;
     options.InstanceName = "IlkProjem_";
-});
-
-// .NET 10 ile gelen gelişmiş önbellekleme servisi
-builder.Services.AddHybridCache(options =>
-{
-    // Varsayılan cache süresi (örneğin 1 saat)
-    options.DefaultEntryOptions = new HybridCacheEntryOptions
-    {
-        Expiration = TimeSpan.FromHours(1),
-        LocalCacheExpiration = TimeSpan.FromMinutes(5) // L1 (Bellek) süresi
-    };
 });
 
 

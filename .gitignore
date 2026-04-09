@@ -1,10 +1,31 @@
-**/bin/
-**/obj/
+# .NET (Recursive)
+[Bb]in/
+[Oo]bj/
+**/[Bb]in/
+**/[Oo]bj/
+
+
+# Handle literal backslash folder names (rare Windows-on-Mac edge case)
+*bin\\*
+*obj\\*
+
+# Publishing
+publish/
 **/publish/
 
+# IDEs
+.vscode/
+.idea/
 *.code-workspace
+*.suo
+*.user
+*.userossc
+*.sln.doccache
 
+# Logs
+Logs/
 **/Logs/
+logs/
 **/logs/
 *.log
 
@@ -13,3 +34,7 @@
 *.tfstate*
 *.tfvars
 .terraform.lock.hcl
+
+# OS files
+.DS_Store
+Thumbs.db
