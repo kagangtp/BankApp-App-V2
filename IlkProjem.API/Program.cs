@@ -75,36 +75,51 @@ builder.Services.AddDbContext<AppDbContext>((sp, options) =>
     options.UseNpgsql(connectionString)
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
-// --- 3b. REDIS & HYBRID CACHE SETUP (GÜNCELLENDİ) ---
-var redisHost = Environment.GetEnvironmentVariable("REDISHOST");
-var redisPort = Environment.GetEnvironmentVariable("REDISPORT");
-var redisPassword = Environment.GetEnvironmentVariable("REDISPASSWORD");
-string redisConfig;
+// --- 3b. REDIS SETUP (BULLETPROOF VERSION) ---
+string? redisConfig = null;
 
-if (!string.IsNullOrEmpty(redisHost))
+// 1. Önce en garanti yol olan tekil değişkenleri dene
+var rHost = Environment.GetEnvironmentVariable("REDISHOST");
+var rPort = Environment.GetEnvironmentVariable("REDISPORT");
+var rPass = Environment.GetEnvironmentVariable("REDISPASSWORD");
+
+if (!string.IsNullOrEmpty(rHost))
 {
-    // Railway Internal Network Bağlantısı
-    redisConfig = $"{redisHost}:{redisPort},password={redisPassword},abortConnect=false";
+    redisConfig = $"{rHost}:{rPort},password={rPass},abortConnect=false,ssl=false";
 }
-else
+
+// 2. Eğer yukarıdakiler yoksa REDIS_URL'i dene ve temizle
+if (string.IsNullOrEmpty(redisConfig))
 {
-    // Local Fallback
+    var rUrl = Environment.GetEnvironmentVariable("REDIS_URL");
+    if (!string.IsNullOrEmpty(rUrl))
+    {
+        if (rUrl.StartsWith("redis://"))
+        {
+            var uri = new Uri(rUrl);
+            var password = uri.UserInfo.Contains(':') ? uri.UserInfo.Split(':')[1] : uri.UserInfo;
+            redisConfig = $"{uri.Host}:{uri.Port},password={password},abortConnect=false,ssl=false";
+        }
+        else
+        {
+            redisConfig = rUrl;
+        }
+    }
+}
+
+// 3b.a. Hiçbiri yoksa Local/Appsettings dene
+if (string.IsNullOrEmpty(redisConfig))
+{
     redisConfig = builder.Configuration.GetConnectionString("RedisConnection") ?? "localhost:6379";
 }
+
+// Debug için (Loglarda şifreyi gizleyerek adresi gör)
+Console.WriteLine($"[REDIS CONFIG]: {redisConfig.Split(',')[0]} (Password hidden)");
 
 builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = redisConfig;
     options.InstanceName = "IlkProjem_";
-});
-
-builder.Services.AddHybridCache(options =>
-{
-    options.DefaultEntryOptions = new HybridCacheEntryOptions
-    {
-        Expiration = TimeSpan.FromHours(1),
-        LocalCacheExpiration = TimeSpan.FromMinutes(5)
-    };
 });
 
 
