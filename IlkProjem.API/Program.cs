@@ -30,13 +30,15 @@ BannerHelper.PrintLogo();
 
 var builder = WebApplication.CreateBuilder(args);
 
-// --- 0. BAĞLANTI CÜMLESİ TAMİRCİSİ ---
-var rawConnection = builder.Configuration.GetConnectionString("DefaultConnection") 
-                    ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
-                    ?? Environment.GetEnvironmentVariable("DATABASE_URL")
-                    ?? Environment.GetEnvironmentVariable("DATABASE_PRIVATE_URL");
+// --- 0. BAĞLANTI CÜMLESİ TAMİRCİSİ (POSTGRES) ---
+var configDb = builder.Configuration.GetConnectionString("DefaultConnection");
+var envDb = Environment.GetEnvironmentVariable("DATABASE_URL") 
+            ?? Environment.GetEnvironmentVariable("DATABASE_PRIVATE_URL");
 
-string connectionString = rawConnection ?? "";
+// Boş tırnak veya null kontrolü yaparak gerçek bağlantıyı seçiyoruz
+string rawConnection = !string.IsNullOrWhiteSpace(configDb) ? configDb : (envDb ?? "");
+
+string connectionString = rawConnection;
 
 if (!string.IsNullOrEmpty(rawConnection) && rawConnection.StartsWith("postgres"))
 {
@@ -69,42 +71,38 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
-// --- 3. DATABASE & SUPABASE SETUP ---
+// --- 3. DATABASE SETUP ---
 builder.Services.AddScoped<AuditSaveChangesInterceptor>();
 builder.Services.AddDbContext<AppDbContext>((sp, options) =>
     options.UseNpgsql(connectionString)
            .AddInterceptors(sp.GetRequiredService<AuditSaveChangesInterceptor>()));
 
-// --- 3b. REDIS SETUP (SON VE KESİN DOKUNUŞ) ---
-var rHost = Environment.GetEnvironmentVariable("REDISHOST");
-var rPort = Environment.GetEnvironmentVariable("REDISPORT");
-var rPass = Environment.GetEnvironmentVariable("REDISPASSWORD");
+// --- 3b. REDIS SETUP (GÜVENLİ VE AKILLI) ---
+var envRedisUrl = Environment.GetEnvironmentVariable("REDIS_URL");
+var configRedisUrl = builder.Configuration.GetConnectionString("RedisConnection");
 
-string redisConfig;
+string redisConfig = "localhost:6379"; // Varsayılan
 
-if (!string.IsNullOrEmpty(rHost))
+if (!string.IsNullOrWhiteSpace(envRedisUrl))
 {
-    // Railway ortamı: Şifre varsa ekle, yoksa ekleme (bazı internal redisler şifresiz olabilir)
-    redisConfig = string.IsNullOrEmpty(rPass) 
-        ? $"{rHost}:{rPort},abortConnect=false,ssl=false" 
-        : $"{rHost}:{rPort},password={rPass},abortConnect=false,ssl=false";
+    try 
+    {
+        var uri = new Uri(envRedisUrl);
+        var password = uri.UserInfo.Contains(':') ? uri.UserInfo.Split(':').Last() : uri.UserInfo;
+        // StackExchange.Redis için format: host:port,password=xxx
+        redisConfig = $"{uri.Host}:{uri.Port},password={password},abortConnect=false,ssl=false";
+        Console.WriteLine($"[REDIS SUCCESS]: Railway REDIS_URL aktif.");
+    }
+    catch 
+    {
+        redisConfig = envRedisUrl; // Parse edemezse düz kullanmayı dene
+    }
 }
-else
+else if (!string.IsNullOrWhiteSpace(configRedisUrl))
 {
-    // Local ortamı
-    redisConfig = builder.Configuration.GetConnectionString("RedisConnection") ?? "localhost:6379";
+    redisConfig = configRedisUrl;
 }
 
-// Logun altına şu satırı ekle ki şifrenin gelip gelmediğini görelim
-Console.WriteLine($"[REDIS DEBUG]: Host: {rHost}, Port: {rPort}, HasPassword: {!string.IsNullOrEmpty(rPass)}");
-
-builder.Services.AddStackExchangeRedisCache(options =>
-{
-    options.Configuration = redisConfig;
-    options.InstanceName = "IlkProjem_";
-});
-
-// Debug için (Loglarda şifreyi gizleyerek adresi gör)
 Console.WriteLine($"[REDIS CONFIG]: {redisConfig.Split(',')[0]} (Password hidden)");
 
 builder.Services.AddStackExchangeRedisCache(options =>
@@ -113,6 +111,15 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.InstanceName = "IlkProjem_";
 });
 
+// Hybrid Cache (.NET 9/10 özelliği)
+builder.Services.AddHybridCache(options =>
+{
+    options.DefaultEntryOptions = new HybridCacheEntryOptions
+    {
+        Expiration = TimeSpan.FromHours(1),
+        LocalCacheExpiration = TimeSpan.FromMinutes(5)
+    };
+});
 
 // --- 4. AUTHENTICATION & JWT ---
 var keyString = builder.Configuration["Jwt:Key"] ?? "fallback_secret_key_32_characters_long";
@@ -137,55 +144,22 @@ builder.Services.AddAuthentication(x =>
         ValidAudience = builder.Configuration["Jwt:Audience"],
         ValidateLifetime = true
     };
-    x.Events = new JwtBearerEvents
-    {
-        OnMessageReceived = context =>
-        {
-            var accessToken = context.Request.Query["access_token"];
-            var path = context.HttpContext.Request.Path;
-            if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/notification-hub"))
-            {
-                context.Token = accessToken;
-            }
-            return Task.CompletedTask;
-        }
-    };
 });
 
-// --- 4b. AUTHORIZATION POLICIES (PBAC GÜNCELLEMESİ) ---
+// --- 4b. AUTHORIZATION POLICIES ---
 builder.Services.AddAuthorization(options =>
 {
-    // Admin + Manager rollerinin yapabildiği işlemleri spesifik yetkilere bağlıyoruz.
-    // RequireClaim("permissions", ...) kullanımı: Kullanıcının "permissions" claim'i olmalı 
-    // ve değeri bu dizideki yetkilerden EN AZ BİRİYLE eşleşmeli.
-    
     options.AddPolicy(Policies.CustomerManagement, policy =>
-        policy.RequireClaim("permissions", 
-            Permissions.Customers.View, 
-            Permissions.Customers.Create, 
-            Permissions.Customers.Edit, 
-            Permissions.Customers.Delete));
-
-    // Sadece Admin'in yapabildiği, sistemsel yetkiler
+        policy.RequireClaim("permissions", Permissions.Customers.View, Permissions.Customers.Create, Permissions.Customers.Edit, Permissions.Customers.Delete));
     options.AddPolicy(Policies.AdminOnly, policy =>
         policy.RequireClaim("permissions", Permissions.System.Manage));
-
-    // Kullanıcı yönetimi yetkileri
     options.AddPolicy(Policies.UserManagement, policy =>
-        policy.RequireClaim("permissions", 
-            Permissions.Users.View, 
-            Permissions.Users.Create, 
-            Permissions.Users.Edit, 
-            Permissions.Users.Delete));
-
-    // Dosya/Asset yönetimi yetkileri
+        policy.RequireClaim("permissions", Permissions.Users.View, Permissions.Users.Create, Permissions.Users.Edit, Permissions.Users.Delete));
     options.AddPolicy(Policies.FileManagement, policy =>
-        policy.RequireClaim("permissions", 
-            Permissions.Files.Upload, 
-            Permissions.Files.Delete, 
-            Permissions.Files.View));
+        policy.RequireClaim("permissions", Permissions.Files.Upload, Permissions.Files.Delete, Permissions.Files.View));
 });
-// --- 5. RATE LIMITING ---
+
+// --- 5. RATE LIMITING & SIGNALR ---
 builder.Services.AddRateLimiter(options =>
 {
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
@@ -195,24 +169,10 @@ builder.Services.AddRateLimiter(options =>
             Window = TimeSpan.FromSeconds(1),
             QueueLimit = 0
         }));
-
-   options.AddPolicy("PerUser", httpContext =>
-        RateLimitPartition.GetFixedWindowLimiter(
-            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-            factory: _ => new FixedWindowRateLimiterOptions
-            {
-                PermitLimit = 1000,
-                Window = TimeSpan.FromMinutes(1),
-                QueueLimit = 0
-            }));
-    
     options.RejectionStatusCode = 429;
 });
 
-// --- 5b. SIGNALR SETUP ---
 builder.Services.AddSignalR();
-
-
 builder.Services.AddHttpContextAccessor();
 
 // DI Registrations
@@ -224,7 +184,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 builder.Services.AddScoped<ICalculatorService, CalculatorService>();
 builder.Services.AddScoped<IExcelService, ExcelService>();
-builder.Services.AddScoped<IFilesService, FilesService>(); // Bu artık Native Google Cloud kullanacak
+builder.Services.AddScoped<IFilesService, FilesService>();
 builder.Services.AddScoped<IFilesRepository, FilesRepository>();
 builder.Services.AddScoped<ICarRepository, CarRepository>();
 builder.Services.AddScoped<ICarService, CarService>();
@@ -234,27 +194,19 @@ builder.Services.AddScoped<IMailService, MailManager>();
 builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 builder.Services.AddScoped<IChatService, ChatService>();
-
-// AI Chat DI Registrations
 builder.Services.AddScoped<IAiChatMessageRepository, AiChatMessageRepository>();
 builder.Services.AddHttpClient<IAiChatService, AiChatService>();
 
-// --- 5c. QUARTZ SCHEDULER SETUP ---
+// --- 5c. QUARTZ SETUP ---
 builder.Services.AddQuartz(quartz =>
 {
-    // İş tanımı
     var jobKey = new JobKey("DailyMailJob");
     quartz.AddJob<DailyMailJob>(opts => opts.WithIdentity(jobKey));
-
-    // Tetikleyici tanımı (Her sabah 09:00:00)
     quartz.AddTrigger(opts => opts
         .ForJob(jobKey)
         .WithIdentity("DailyMailJob-Trigger")
-        .WithCronSchedule("0 0 9 * * ?") // TEST: Her dakika çalışır (Eski hâli: 0 0 9 * * ?)
-    );
+        .WithCronSchedule("0 0 9 * * ?"));
 });
-
-// Quartz servisinin arka planda çalışmasını sağlar
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
 builder.Services.AddValidatorsFromAssemblyContaining<IlkProjem.BLL.ValidationRules.FluentValidation.CustomerDtoValidators.CustomerCreateDtoValidator>();
@@ -278,12 +230,7 @@ builder.Services.AddCors(options =>
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
     .WriteTo.Console()
-    .WriteTo.File(
-        path: "Logs/app-.log",
-        rollingInterval: RollingInterval.Day,
-        retainedFileCountLimit: 31,
-        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff} [{Level:u3}] {Message:lj}{NewLine}{Exception}")
-    .WriteTo.PostgreSQL(connectionString, "ServiceLog") 
+    .WriteTo.PostgreSQL(connectionString, "ServiceLog", needAutoCreateTable: true) 
     .CreateLogger();
 
 builder.Host.UseSerilog();
@@ -301,14 +248,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// NOT: Artık Supabase kullandığımız için "app.UseStaticFiles" (yerel uploads klasörü) 
-// devre dışı bırakıldı. Dosyalar artık Supabase URL'leri üzerinden çekilecek.
-
 app.UseRouting();
 app.UseCors("AllowAngular");
 app.UseMiddleware<LoggingMiddleware>();
 app.UseRateLimiter();
-
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -318,7 +261,7 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.MapHub<IlkProjem.Core.Hubs.NotificationHub>("/notification-hub");
-app.MapControllers().RequireRateLimiting("PerUser");
+app.MapControllers().RequireRateLimiting("Global");
 
 // --- 9. DATABASE MIGRATION & SEED DATA ---
 using (var scope = app.Services.CreateScope())
@@ -327,13 +270,17 @@ using (var scope = app.Services.CreateScope())
     
     if (!string.IsNullOrWhiteSpace(connectionString))
     {
-        context.Database.Migrate();
-    }
-
-    if (!context.Customers.Any())
-    {
-        context.Customers.AddRange(CustomerSeeder.GetFakeCustomers(50));
-        context.SaveChanges();
+        try {
+            context.Database.Migrate();
+            if (!context.Customers.Any())
+            {
+                context.Customers.AddRange(CustomerSeeder.GetFakeCustomers(50));
+                context.SaveChanges();
+            }
+        }
+        catch (Exception ex) {
+            Console.WriteLine($"[MIGRATION ERROR]: {ex.Message}");
+        }
     }
 }
 
@@ -346,6 +293,7 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
+    // Railway için dinamik port kullanımı
     var port = Environment.GetEnvironmentVariable("PORT") ?? "5005";
     app.Run($"http://0.0.0.0:{port}");
 }
