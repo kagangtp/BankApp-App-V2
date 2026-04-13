@@ -33,7 +33,7 @@ public class AiChatService : IAiChatService
         _logger = logger;
 
         _apiKey = _config["GeminiAI:ApiKey"] ?? "";
-        _model = _config["GeminiAI:Model"] ?? "gemini-2.0-flash";
+        _model = _config["GeminiAI:Model"] ?? "gemini-3.0-flash";
     }
 
     /// <summary>

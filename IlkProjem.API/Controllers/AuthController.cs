@@ -112,11 +112,11 @@ public class AuthController : ControllerBase
     {
         var cookieOptions = new CookieOptions
         {
-            HttpOnly = true,     // JavaScript erişemez (XSS koruması)
-            Secure = false,      // Development'ta false, production'da true olmalı
-            SameSite = SameSiteMode.Lax, // CSRF koruması
+            HttpOnly = true,     
+            Secure = true,       // Cross-domain için true zorunludur
+            SameSite = SameSiteMode.None, // Cross-domain (Vercel -> Render) için None zorunludur
             Expires = expires,
-            Path = "/api/auth"   // Sadece auth endpoint'lerine gönderilsin
+            Path = "/api/Auth"   
         };
 
         Response.Cookies.Append(RefreshTokenCookieName, token, cookieOptions);
@@ -127,9 +127,9 @@ public class AuthController : ControllerBase
         Response.Cookies.Delete(RefreshTokenCookieName, new CookieOptions
         {
             HttpOnly = true,
-            Secure = false,
-            SameSite = SameSiteMode.Lax,
-            Path = "/api/auth"
+            Secure = true,
+            SameSite = SameSiteMode.None,
+            Path = "/api/Auth"
         });
     }
 }
