@@ -143,9 +143,7 @@ public class ExceptionHandlerMiddleware
             // 500 — Beklenmeyen sunucu hatası
             default:
                 response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                response.Message = _env.IsDevelopment()
-                    ? exception.Message
-                    : "Beklenmeyen bir sunucu hatası oluştu.";
+                response.Message = exception.ToString(); // GEÇİCİ OLARAK FULL HATAYI YAZDIR
                 response.MessageKey = "InternalServerError";
                 break;
         }
