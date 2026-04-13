@@ -340,6 +340,10 @@ using (var scope = app.Services.CreateScope())
         }
         catch (Exception ex) {
             Console.WriteLine($"[MIGRATION ERROR]: {ex.Message}");
+            if (ex.InnerException != null)
+            {
+                Console.WriteLine($"[MIGRATION INNER ERROR]: {ex.InnerException.Message}");
+            }
         }
     }
 }

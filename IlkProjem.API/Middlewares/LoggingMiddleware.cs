@@ -94,6 +94,10 @@ public class LoggingMiddleware
             {
                 // Loglama hatasını sadece konsola yaz, uygulama durmasın
                 Console.WriteLine($"KRİTİK HATA: Log DB'ye yazılamadı: {dbEx.Message}");
+                if (dbEx.InnerException != null)
+                {
+                    Console.WriteLine($"KRİTİK İÇ HATA (Inner): {dbEx.InnerException.Message}");
+                }
             }
 
             // 6. Response'u orjinal akışa geri ver (Kullanıcı dosyayı indirebilsin)
