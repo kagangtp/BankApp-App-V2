@@ -14,17 +14,16 @@ public class FilesService : IFilesService
 {
     private readonly IFilesRepository _fileRepository;
     private readonly ICustomerRepository _customerRepository;
-    private readonly string _projectId;
+    private readonly StorageClient _storageClient;
     private readonly string _bucketName;
-    public FilesService(IFilesRepository fileRepository, ICustomerRepository customerRepository, IConfiguration configuration)
+    public FilesService(IFilesRepository fileRepository, ICustomerRepository customerRepository, IConfiguration configuration, StorageClient storageClient)
     {
         _fileRepository = fileRepository;
         _customerRepository = customerRepository;
-        _projectId = configuration["GoogleCloud:ProjectId"] 
-                     ?? throw new InvalidOperationException("GoogleCloud:ProjectId is not found.");
+        _storageClient = storageClient;
         
-        // Hardcoded or from config, as we learned from output previously
-        _bucketName = "bankapp-images-mm1d09"; 
+        _bucketName = configuration["GoogleCloud:BucketName"] 
+                     ?? throw new InvalidOperationException("GoogleCloud:BucketName is not found. Add it to .env or appsettings.json.");
     }
 
     public async Task<Files> UploadAsync(IFormFile file)
@@ -62,10 +61,9 @@ public class FilesService : IFilesService
             relativePath = $"{now.Year}/{now.Month:D2}/{uniqueFileName}";
             detectedMime = file.ContentType;
 
-            var storage = await StorageClient.CreateAsync();
             stream.Position = 0;
 
-            await storage.UploadObjectAsync(
+            await _storageClient.UploadObjectAsync(
                 _bucketName,
                 relativePath,
                 file.ContentType,
@@ -101,9 +99,8 @@ public class FilesService : IFilesService
 
         if (!string.IsNullOrEmpty(fileRecord.Metadata) && fileRecord.Metadata.Contains("GCP"))
         {
-            var storage = await StorageClient.CreateAsync();
             using var memoryStream = new MemoryStream();
-            await storage.DownloadObjectAsync(_bucketName, fileRecord.RelativePath, memoryStream);
+            await _storageClient.DownloadObjectAsync(_bucketName, fileRecord.RelativePath, memoryStream);
             return memoryStream.ToArray();
         }
         
@@ -121,8 +118,7 @@ public class FilesService : IFilesService
         {
             if (!string.IsNullOrEmpty(fileRecord.Metadata) && fileRecord.Metadata.Contains("GCP"))
             {
-                var storage = await StorageClient.CreateAsync();
-                await storage.DeleteObjectAsync(_bucketName, fileRecord.RelativePath);
+                await _storageClient.DeleteObjectAsync(_bucketName, fileRecord.RelativePath);
             }
         }
 

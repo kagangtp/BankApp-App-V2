@@ -26,7 +26,7 @@ WORKDIR /app
 # Derlenen dosyaları build aşamasından al
 COPY --from=build /app/publish .
 
-# Railway için port ayarı
+# Render için port ayarı
 ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 EXPOSE 8080
 

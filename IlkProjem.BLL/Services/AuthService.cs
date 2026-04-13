@@ -45,8 +45,8 @@ public class AuthService : IAuthService
             return new ErrorDataResult<LoginResponseDto>(_localizer["AuthError"]);
         }
 
-        // Access token oluştur (15 dakika)
-        var expiresAt = DateTime.UtcNow.AddMinutes(15);
+        // Access token oluştur
+        var expiresAt = DateTime.UtcNow.AddMinutes(GetAccessTokenExpiryMinutes());
         var accessToken = GenerateJwtToken(user, expiresAt);
 
         // Refresh token oluştur ve DB'ye kaydet
@@ -135,7 +135,7 @@ public class AuthService : IAuthService
         await _refreshTokenRepository.SaveChangesAsync(ct);
 
         // Yeni access token
-        var expiresAt = DateTime.UtcNow.AddMinutes(15);
+        var expiresAt = DateTime.UtcNow.AddMinutes(GetAccessTokenExpiryMinutes());
         var accessToken = GenerateJwtToken(user, expiresAt);
 
         var responseDto = new LoginResponseDto
@@ -225,6 +225,12 @@ public class AuthService : IAuthService
     {
         var value = _configuration["RefreshToken:ExpiresInDays"];
         return int.TryParse(value, out var days) ? days : 7;
+    }
+
+    private int GetAccessTokenExpiryMinutes()
+    {
+        var value = _configuration["Jwt:AccessTokenExpiresInMinutes"];
+        return int.TryParse(value, out var minutes) ? minutes : 15;
     }
 }
 

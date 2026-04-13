@@ -25,10 +25,17 @@ using IlkProjem.BLL.Jobs;
 using IlkProjem.API.Helpers;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Google.Cloud.Storage.V1;
+using Google.Apis.Auth.OAuth2;
 
 BannerHelper.PrintLogo();
 
+// --- 0. .ENV LOAD ---
+// Traverse path to find the frontend/backend adjacent outer .env file
+DotNetEnv.Env.TraversePath().Load();
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // --- 0. BAĞLANTI CÜMLESİ TAMİRCİSİ (POSTGRES) ---
 var configDb = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -81,7 +88,7 @@ builder.Services.AddDbContext<AppDbContext>((sp, options) =>
 var envRedisUrl = Environment.GetEnvironmentVariable("REDIS_URL");
 var configRedisUrl = builder.Configuration.GetConnectionString("RedisConnection");
 
-string redisConfig = "localhost:6379"; // Varsayılan
+string redisConfig = string.Empty;
 
 if (!string.IsNullOrWhiteSpace(envRedisUrl))
 {
@@ -91,7 +98,7 @@ if (!string.IsNullOrWhiteSpace(envRedisUrl))
         var password = uri.UserInfo.Contains(':') ? uri.UserInfo.Split(':').Last() : uri.UserInfo;
         // StackExchange.Redis için format: host:port,password=xxx
         redisConfig = $"{uri.Host}:{uri.Port},password={password},abortConnect=false,ssl=false";
-        Console.WriteLine($"[REDIS SUCCESS]: Railway REDIS_URL aktif.");
+        Console.WriteLine($"[REDIS SUCCESS]: Render REDIS_URL aktif.");
     }
     catch 
     {
@@ -102,6 +109,13 @@ else if (!string.IsNullOrWhiteSpace(configRedisUrl))
 {
     redisConfig = configRedisUrl;
 }
+
+if (string.IsNullOrWhiteSpace(redisConfig))
+{
+    Console.WriteLine("[REDIS WARNING]: Redis connection string is missing from env or config. Falling back to local network default.");
+    redisConfig = "localhost:6379"; // Last resort safeguard for local dev if not defined in .env
+}
+
 
 Console.WriteLine($"[REDIS CONFIG]: {redisConfig.Split(',')[0]} (Password hidden)");
 
@@ -122,7 +136,11 @@ builder.Services.AddHybridCache(options =>
 });
 
 // --- 4. AUTHENTICATION & JWT ---
-var keyString = builder.Configuration["Jwt:Key"] ?? "fallback_secret_key_32_characters_long";
+var keyString = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(keyString))
+{
+    throw new InvalidOperationException("JWT Key is missing from configuration. Add it to .env or appsettings.json.");
+}
 var key = Encoding.ASCII.GetBytes(keyString);
 
 builder.Services.AddAuthentication(x =>
@@ -221,6 +239,23 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IAiChatMessageRepository, AiChatMessageRepository>();
 builder.Services.AddHttpClient<IAiChatService, AiChatService>();
 
+// --- 5b. GCP STORAGE CLIENT (Singleton) ---
+builder.Services.AddSingleton<StorageClient>(sp =>
+{
+    var gcpCredJson = Environment.GetEnvironmentVariable("GCP_CREDENTIALS_JSON");
+    if (!string.IsNullOrWhiteSpace(gcpCredJson))
+    {
+        // Production (Render): Inline JSON credential
+        var credential = GoogleCredential.FromJson(gcpCredJson);
+        Console.WriteLine("[GCP SUCCESS]: Service Account credential loaded from GCP_CREDENTIALS_JSON.");
+        return StorageClient.Create(credential);
+    }
+
+    // Local dev: Application Default Credentials (gcloud auth application-default login)
+    Console.WriteLine("[GCP INFO]: Using Application Default Credentials (local dev).");
+    return StorageClient.Create();
+});
+
 // --- 5c. QUARTZ SETUP ---
 builder.Services.AddQuartz(quartz =>
 {
@@ -241,10 +276,11 @@ builder.Services.AddControllers()
     });
 
 // --- 6. CORS ---
+var corsOrigins = Environment.GetEnvironmentVariable("ASPNETCORE_CORS_ORIGINS")?.Split(',') ?? Array.Empty<string>();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngular",
-        policy => policy.WithOrigins("http://localhost:4200", "https://bank-app-ui-v2.vercel.app") 
+        policy => policy.WithOrigins(corsOrigins) 
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
@@ -317,7 +353,15 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    // Railway için dinamik port kullanımı
-    var port = Environment.GetEnvironmentVariable("PORT") ?? "5005";
-    app.Run($"http://0.0.0.0:{port}");
+    // Render için dinamik port kullanımı
+    var port = Environment.GetEnvironmentVariable("PORT");
+    if (!string.IsNullOrEmpty(port))
+    {
+        app.Run($"http://0.0.0.0:{port}");
+    }
+    else
+    {
+        // Kullanıcı .env file üzerinde ASPNETCORE_URLS verebilir.
+        app.Run();
+    }
 }
