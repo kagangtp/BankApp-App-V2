@@ -14,8 +14,7 @@ public static class CustomerSeeder
             // Bakiye başta 0 olarak belirlendi
             .RuleFor(c => c.Balance, f => 0m)
             
-            // Tarihlerin 0001-01-01 gelmemesi için son 1 yıl içinde rastgele bir tarih atıyoruz.
-            .RuleFor(c => c.CreatedAt, f => f.Date.Past(1));
+            .RuleFor(c => c.CreatedAt, f => f.Date.Past(1).ToUniversalTime());
 
         return customerFaker.Generate(count);
     }
