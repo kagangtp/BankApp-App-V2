@@ -33,7 +33,7 @@ public class AiChatService : IAiChatService
         _logger = logger;
 
         _apiKey = _config["GeminiAI:ApiKey"] ?? "";
-        _model = _config["GeminiAI:Model"] ?? "gemini-3.0-flash";
+        _model = _config["GeminiAI:Model"] ?? "gemini-1.5-flash";
     }
 
     /// <summary>
@@ -191,10 +191,10 @@ Strict Rules:
 
             // Diğer hatalar — direkt fırlat
             var errorBody = await response.Content.ReadAsStringAsync(ct);
-            _logger.LogError("Gemini API hatası: {StatusCode} — {Body}", response.StatusCode, errorBody);
-            throw new HttpRequestException($"Gemini API hatası: {response.StatusCode}");
+            _logger.LogError("Gemini API Error Detail: {StatusCode} — {Body}", response.StatusCode, errorBody);
+            throw new HttpRequestException($"Gemini API error: {response.StatusCode}. Details: {errorBody}");
         }
 
-        throw new HttpRequestException("Gemini API: Maksimum deneme sayısına ulaşıldı.");
+        throw new HttpRequestException("Gemini API: Maximum retries reached.");
     }
 }

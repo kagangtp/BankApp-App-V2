@@ -7,6 +7,8 @@ using IlkProjem.DAL.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using System.Text.Json;
+using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Logging;
 
 namespace IlkProjem.BLL.Services;
 
@@ -15,12 +17,22 @@ public class FilesService : IFilesService
     private readonly IFilesRepository _fileRepository;
     private readonly ICustomerRepository _customerRepository;
     private readonly StorageClient _storageClient;
+    private readonly HybridCache _cache;
+    private readonly ILogger<FilesService> _logger;
     private readonly string _bucketName;
-    public FilesService(IFilesRepository fileRepository, ICustomerRepository customerRepository, IConfiguration configuration, StorageClient storageClient)
+    public FilesService(
+        IFilesRepository fileRepository, 
+        ICustomerRepository customerRepository, 
+        IConfiguration configuration, 
+        StorageClient storageClient,
+        HybridCache cache,
+        ILogger<FilesService> logger)
     {
         _fileRepository = fileRepository;
         _customerRepository = customerRepository;
         _storageClient = storageClient;
+        _cache = cache;
+        _logger = logger;
         
         _bucketName = configuration["GoogleCloud:BucketName"] 
                      ?? throw new InvalidOperationException("GoogleCloud:BucketName is not found. Add it to .env or appsettings.json.");
@@ -174,6 +186,13 @@ public class FilesService : IFilesService
                 }
                 
                 await _fileRepository.SaveChangesAsync();
+
+                // --- CACHE INVALIDATION ---
+                // Müşteri verisi değiştiği için cache'i temizle
+                await _cache.RemoveAsync($"customer:{assignDto.OwnerId}");
+                await _cache.RemoveByTagAsync("customers_list");
+                _logger.LogInformation("[CACHE]: Cleared cache for customer {CustomerId} after profile image update.", assignDto.OwnerId);
+
                 return true;
             }
         }

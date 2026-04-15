@@ -239,6 +239,11 @@ builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IAiChatMessageRepository, AiChatMessageRepository>();
 builder.Services.AddHttpClient<IAiChatService, AiChatService>();
 
+// --- MCP SERVER ---
+builder.Services.AddMcpServer()
+    .WithHttpTransport()
+    .WithToolsFromAssembly(typeof(Program).Assembly);
+
 // --- 5b. GCP STORAGE CLIENT (Singleton) ---
 builder.Services.AddSingleton<StorageClient>(sp =>
 {
@@ -301,6 +306,7 @@ var app = builder.Build();
 var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
 app.UseRequestLocalization(locOptions.Value);
 app.UseMiddleware<ExceptionHandlerMiddleware>();
+app.UseMiddleware<McpAuthMiddleware>(); 
 
 if (app.Environment.IsDevelopment())
 {
@@ -322,6 +328,7 @@ if (!app.Environment.IsDevelopment())
 
 app.MapHub<IlkProjem.Core.Hubs.NotificationHub>("/notification-hub");
 app.MapControllers().RequireRateLimiting("PerUser");
+app.MapMcp("/mcp");   
 
 // --- 9. DATABASE MIGRATION & SEED DATA ---
 using (var scope = app.Services.CreateScope())
