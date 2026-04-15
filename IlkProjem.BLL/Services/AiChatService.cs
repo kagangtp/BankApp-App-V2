@@ -131,7 +131,7 @@ Strict Rules:
     /// </summary>
     private async Task<string> CallGeminiApiAsync(List<AiChatMessage> history, CancellationToken ct)
     {
-        var url = $"https://generativelanguage.googleapis.com/v1beta/models/{_model}:generateContent?key={_apiKey}";
+        var url = $"https://generativelanguage.googleapis.com/v1/models/{_model}:generateContent?key={_apiKey}";
 
         // Gemini API request body oluştur
         var contents = new List<object>();
