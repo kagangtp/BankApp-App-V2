@@ -46,8 +46,10 @@ public class DailyMailJob : IJob
             _logger.LogInformation("Genel günlük özet maili başarıyla gönderildi.");
 
             // --- DOĞUM GÜNÜ MAİLLERİ ---
-            var today = DateTime.Today;
-            var birthdaySpec = new CustomerBirthdaySpecification(today);
+            var turkeyTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
+            var todayAtTurkey = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, turkeyTimeZone).Date;
+            
+            var birthdaySpec = new CustomerBirthdaySpecification(todayAtTurkey);
             var bdayCustomers = await _customerRepository.ListAsync(birthdaySpec);
 
             _logger.LogInformation("Bugün doğum günü olan {Count} müşteri bulundu.", bdayCustomers.Count);
