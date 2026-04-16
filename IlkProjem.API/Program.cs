@@ -269,7 +269,7 @@ builder.Services.AddQuartz(quartz =>
     quartz.AddTrigger(opts => opts
         .ForJob(jobKey)
         .WithIdentity("DailyMailJob-Trigger")
-        .WithCronSchedule("0 0 9 * * ?"));
+        .WithCronSchedule("0 0 9 * * ?", x => x.InTimeZone(TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul"))));
 });
 builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
 
