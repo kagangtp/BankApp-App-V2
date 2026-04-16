@@ -147,7 +147,7 @@ Strict Rules:
 
         var requestBody = new
         {
-            system_instruction = new
+            systemInstruction = new
             {
                 parts = new[] { new { text = SystemPrompt } }
             },
