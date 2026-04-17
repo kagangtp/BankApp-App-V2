@@ -237,11 +237,15 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IAiChatMessageRepository, AiChatMessageRepository>();
+// AiChatService: HttpClient + ICustomerService + ICarService + IHouseService inject alır.
+// ICustomerService/ICarService/IHouseService zaten üstte Scoped olarak kayıtlı — ek kayıt gerekmez.
 builder.Services.AddHttpClient<IAiChatService, AiChatService>();
 
 // --- MCP SERVER ---
+// Stateless = true → Session yönetimi yok, her request bağımsız çalışır.
+// MCP Inspector, Claude Desktop gibi araçlarla çalışmak için gereklidir.
 builder.Services.AddMcpServer()
-    .WithHttpTransport()
+    .WithHttpTransport(options => { options.Stateless = true; })
     .WithToolsFromAssembly(typeof(Program).Assembly);
 
 // --- 5b. GCP STORAGE CLIENT (Singleton) ---

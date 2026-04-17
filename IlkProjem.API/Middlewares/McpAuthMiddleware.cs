@@ -5,6 +5,13 @@ public class McpAuthMiddleware(RequestDelegate next, IConfiguration config)
     {
         if (context.Request.Path.StartsWithSegments("/mcp"))
         {
+            // Browser preflight (CORS) isteklerine izin ver
+            if (context.Request.Method == "OPTIONS")
+            {
+                await next(context);
+                return;
+            }
+
             var apiKey = config["MCP_API_KEY"];
             if (!context.Request.Headers.TryGetValue("X-API-Key", out var key) || key != apiKey)
             {
