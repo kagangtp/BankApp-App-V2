@@ -15,7 +15,7 @@ public class AssetTools(ICarService carService, IHouseService houseService)
 
     // ==================== ARAÇ (CAR) TOOLS ====================
 
-    [McpServerTool, Description("Belirli bir müşterinin tüm araçlarını listeler.")]
+    [McpServerTool, Description("Belirli bir müşterinin üzerine kayıtlı tüm araçları, arabaları veya taşıtları listeler, getirir.")]
     public async Task<string> GetCarsByCustomerId(
         [Description("Araçları listelenecek müşteri ID'si")] int customerId)
     {
@@ -29,7 +29,7 @@ public class AssetTools(ICarService carService, IHouseService houseService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Müşteriye yeni bir araç kaydı ekler.")]
+    [McpServerTool, Description("Müşteriye ait yeni bir araç, araba veya plaka kaydı ekler/oluşturur.")]
     public async Task<string> AddCar(
         [Description("Aracın ait olduğu müşteri ID'si")] int customerId,
         [Description("Araç plakası (zorunlu, örn: '34 ABC 123')")] string plate,
@@ -74,7 +74,7 @@ public class AssetTools(ICarService carService, IHouseService houseService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Araç kaydını siler. Bu işlem geri alınamaz.")]
+    [McpServerTool, Description("Bir araç veya araba kaydını sistemden siler/kaldırır.")]
     public async Task<string> DeleteCar(
         [Description("Silinecek araç ID'si")] int id)
     {
@@ -89,7 +89,7 @@ public class AssetTools(ICarService carService, IHouseService houseService)
 
     // ==================== GAYRİMENKUL (HOUSE) TOOLS ====================
 
-    [McpServerTool, Description("Belirli bir müşterinin tüm gayrimenkullerini (evlerini) listeler.")]
+    [McpServerTool, Description("Belirli bir kişinin evlerini, konutlarını, taşınmazlarını veya gayrimenkullerini listeler.")]
     public async Task<string> GetHousesByCustomerId(
         [Description("Gayrimenkulleri listelenecek müşteri ID'si")] int customerId)
     {
@@ -103,7 +103,7 @@ public class AssetTools(ICarService carService, IHouseService houseService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Müşteriye yeni bir gayrimenkul (ev) kaydı ekler.")]
+    [McpServerTool, Description("Müşteri adına yeni bir ev, konut veya gayrimenkul kaydı açar/ekler.")]
     public async Task<string> AddHouse(
         [Description("Gayrimenkulün ait olduğu müşteri ID'si")] int customerId,
         [Description("Gayrimenkulün adresi (zorunlu)")] string address,
@@ -148,7 +148,7 @@ public class AssetTools(ICarService carService, IHouseService houseService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Gayrimenkul kaydını siler. Bu işlem geri alınamaz.")]
+    [McpServerTool, Description("Bir gayrimenkul, ev veya konut kaydını sistemden siler.")]
     public async Task<string> DeleteHouse(
         [Description("Silinecek gayrimenkul ID'si")] int id)
     {

@@ -11,7 +11,7 @@ public class UserTools(IUserService userService)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    [McpServerTool, Description("Sistemdeki tüm kullanıcıları listeler. Kullanıcı ID, username, email, rol ve kayıt tarihi döner.")]
+    [McpServerTool, Description("Sistemdeki tüm kullanıcıları, personelleri veya üyeleri listeler. ID, kullanıcı adı, rol gibi bilgileri döner.")]
     public async Task<string> GetAllUsers()
     {
         var users = await userService.GetAllUsersAsync();
@@ -23,7 +23,7 @@ public class UserTools(IUserService userService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Belirli bir kullanıcıyı ID ile getirir.")]
+    [McpServerTool, Description("Belirli bir kullanıcıyı veya personeli ID numarası ile sorgular, bilgilerini getirir.")]
     public async Task<string> GetUserById(
         [Description("Kullanıcı ID'si")] int id)
     {
@@ -45,7 +45,7 @@ public class UserTools(IUserService userService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Kullanıcıyı Admin rolüne yükseltir. Dikkatli kullanılmalıdır.")]
+    [McpServerTool, Description("Kullanıcıyı Admin (Yönetici) yapar, rolünü yükseltir veya yetki verir.")]
     public async Task<string> PromoteUser(
         [Description("Admin'e yükseltilecek kullanıcı ID'si")] int id)
     {
@@ -70,7 +70,7 @@ public class UserTools(IUserService userService)
         }
     }
 
-    [McpServerTool, Description("Admin kullanıcıyı normal User rolüne düşürür. Dikkatli kullanılmalıdır.")]
+    [McpServerTool, Description("Kullanıcının Admin (Yönetici) yetkisini geri alır, normal kullanıcı rolüne düşürür.")]
     public async Task<string> DemoteUser(
         [Description("User rolüne düşürülecek kullanıcı ID'si")] int id)
     {

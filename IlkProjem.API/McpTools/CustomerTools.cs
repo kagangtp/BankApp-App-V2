@@ -13,7 +13,7 @@ public class CustomerTools(ICustomerService customerService)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    [McpServerTool, Description("Müşteri listesini sayfalı olarak getirir. Arama ve sıralama desteği vardır.")]
+    [McpServerTool, Description("Sistemdeki müşterileri listeler, getirir, arar veya sorgular. Sayfalı sonuç döner, isim veya e-posta ile filtreleme yapılabilir.")]
     public async Task<string> GetCustomers(
         [Description("Sayfa boyutu (varsayılan 10, maksimum 50)")] int pageSize = 10,
         [Description("Cursor tabanlı sayfalama için son müşteri ID'si (ilk sayfa için 0)")] int lastId = 0,
@@ -36,7 +36,7 @@ public class CustomerTools(ICustomerService customerService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Belirli bir müşteriyi ID ile getirir. Detaylı müşteri bilgilerini döner.")]
+    [McpServerTool, Description("Belirli bir müşterinin detaylarına ID ile bakar veya bilgilerini getirir. Spesifik bir kişi hakkında bilgi almak için kullanılır.")]
     public async Task<string> GetCustomerById(
         [Description("Müşteri ID'si")] int id)
     {
@@ -50,7 +50,7 @@ public class CustomerTools(ICustomerService customerService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Yeni müşteri oluşturur. İsim zorunludur.")]
+    [McpServerTool, Description("Sisteme yeni bir müşteri ekler, kaydeder veya oluşturur. İsim alanı zorunludur.")]
     public async Task<string> AddCustomer(
         [Description("Müşteri adı soyadı (zorunlu)")] string name,
         [Description("Müşteri email adresi")] string? email = null,
@@ -72,7 +72,7 @@ public class CustomerTools(ICustomerService customerService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Mevcut müşteri bilgilerini günceller. Güncellenecek müşterinin ID'si zorunludur.")]
+    [McpServerTool, Description("Mevcut bir müşterinin bilgilerini günceller, değiştirir veya bakiye/e-posta gibi verilerini yeniler.")]
     public async Task<string> UpdateCustomer(
         [Description("Güncellenecek müşteri ID'si")] int id,
         [Description("Yeni müşteri adı soyadı (zorunlu)")] string name,
@@ -100,7 +100,7 @@ public class CustomerTools(ICustomerService customerService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Müşteriyi sistemden siler. Bu işlem geri alınamaz.")]
+    [McpServerTool, Description("Bir müşteriyi sistemden tamamen siler veya kaldırır. Dikkat: Bu işlem geri alınamaz.")]
     public async Task<string> DeleteCustomer(
         [Description("Silinecek müşteri ID'si")] int id)
     {

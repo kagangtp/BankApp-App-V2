@@ -11,7 +11,7 @@ public class DashboardTools(ICalculatorService calculatorService)
 {
     private static readonly JsonSerializerOptions JsonOptions = new() { WriteIndented = true };
 
-    [McpServerTool, Description("Sistemdeki toplam müşteri sayısını döner.")]
+    [McpServerTool, Description("Sistemdeki toplam müşteri sayısını, üye sayısını veya kaç kişi olduğunu söyler.")]
     public async Task<string> GetTotalCustomerCount()
     {
         var count = await calculatorService.GetTotalAccountCountAsync();
@@ -23,7 +23,7 @@ public class DashboardTools(ICalculatorService calculatorService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Tüm müşterilerin toplam bakiye tutarını döner.")]
+    [McpServerTool, Description("Bankadaki tüm müşterilerin toplam bakiye tutarını, kasanın genel durumunu veya toplam para miktarını söyler.")]
     public async Task<string> GetTotalBalance()
     {
         var total = await calculatorService.GetTotalBalanceSumAsync();
@@ -35,7 +35,7 @@ public class DashboardTools(ICalculatorService calculatorService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Son N aylık müşteri kayıt istatistiklerini döner. Dashboard grafikleri için kullanılır.")]
+    [McpServerTool, Description("Müşteri kayıt istatistiklerini, büyüme rakamlarını veya son aylarda kaç kişinin kayıt olduğunu gösterir. Dashboard grafikleri için veridir.")]
     public async Task<string> GetMonthlyRegistrations(
         [Description("Kaç aylık istatistik getirilsin (varsayılan 6, maksimum 12)")] int months = 6)
     {
@@ -51,7 +51,7 @@ public class DashboardTools(ICalculatorService calculatorService)
         }, JsonOptions);
     }
 
-    [McpServerTool, Description("Basit matematik işlemi yapar. Toplama, çıkarma, çarpma ve bölme desteklenir.")]
+    [McpServerTool, Description("Toplama, çıkarma, çarpma ve bölme gibi temel matematiksel işlemleri/hesaplamaları yapar.")]
     public string Calculate(
         [Description("Birinci sayı")] decimal a,
         [Description("İkinci sayı")] decimal b,
