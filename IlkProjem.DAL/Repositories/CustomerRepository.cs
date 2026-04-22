@@ -34,12 +34,12 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<bool> UpdateAsync(Customer customer, CancellationToken ct = default)
     {
-        _context.Customers.Update(customer);
+        // We do NOT call _context.Customers.Update(customer) because the entity is already 
+        // being tracked by EF (fetched via GetByIdAsync). Calling Update() on a tracked entity 
+        // with navigation properties (like ProfileImage) will incorrectly mark all relationships 
+        // as Modified, causing 500 Server Errors upon SaveChangesAsync.
         
-        // Değişiklikleri kaydet ve kaç satırın etkilendiğini al
         int affectedRows = await _context.SaveChangesAsync(ct);
-        
-        // Eğer en az 1 satır güncellendiyse true, aksi halde false döner
         return affectedRows > 0;
     }
 

@@ -19,18 +19,34 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
         _currentUserService = currentUserService;
     }
 
+    public override InterceptionResult<int> SavingChanges(
+        DbContextEventData eventData,
+        InterceptionResult<int> result)
+    {
+        ProcessAuditFields(eventData.Context);
+        return base.SavingChanges(eventData, result);
+    }
+
     public override ValueTask<InterceptionResult<int>> SavingChangesAsync(
         DbContextEventData eventData,
         InterceptionResult<int> result,
         CancellationToken cancellationToken = default)
     {
-        if (eventData.Context is null)
-            return base.SavingChangesAsync(eventData, result, cancellationToken);
+        ProcessAuditFields(eventData.Context);
+        return base.SavingChangesAsync(eventData, result, cancellationToken);
+    }
+
+    private void ProcessAuditFields(DbContext? context)
+    {
+        if (context is null) return;
 
         var userName = _currentUserService.UserName;
         var userId = _currentUserService.UserId;
 
-        foreach (var entry in eventData.Context.ChangeTracker.Entries<BaseEntity>())
+        // Use .ToList() to prevent "Collection was modified" exceptions
+        var entries = context.ChangeTracker.Entries<BaseEntity>().ToList();
+
+        foreach (var entry in entries)
         {
             switch (entry.State)
             {
@@ -54,16 +70,26 @@ public class AuditSaveChangesInterceptor : SaveChangesInterceptor
 
                 case EntityState.Deleted:
                     // Fiziksel silme yerine soft delete
-                    entry.State = EntityState.Modified;
-                    entry.Entity.IsDeleted = true;
-                    entry.Entity.IsActive = false;
-                    entry.Entity.DeletedAt = DateTime.UtcNow;
-                    entry.Entity.DeletedBy = userName;
-                    entry.Entity.DeletedByUserId = userId;
+                    // DİKKAT: entry.State = EntityState.Modified yaparsak TÜM sütunlar update edilir!
+                    // Bunun yerine Unchanged yapıp sadece sildiğimiz alanların güncellenmesini sağlıyoruz.
+                    entry.State = EntityState.Unchanged;
+                    
+                    entry.Property(nameof(BaseEntity.IsDeleted)).CurrentValue = true;
+                    entry.Property(nameof(BaseEntity.IsDeleted)).IsModified = true;
+
+                    entry.Property(nameof(BaseEntity.IsActive)).CurrentValue = false;
+                    entry.Property(nameof(BaseEntity.IsActive)).IsModified = true;
+
+                    entry.Property(nameof(BaseEntity.DeletedAt)).CurrentValue = DateTime.UtcNow;
+                    entry.Property(nameof(BaseEntity.DeletedAt)).IsModified = true;
+
+                    entry.Property(nameof(BaseEntity.DeletedBy)).CurrentValue = userName;
+                    entry.Property(nameof(BaseEntity.DeletedBy)).IsModified = true;
+
+                    entry.Property(nameof(BaseEntity.DeletedByUserId)).CurrentValue = userId;
+                    entry.Property(nameof(BaseEntity.DeletedByUserId)).IsModified = true;
                     break;
             }
         }
-
-        return base.SavingChangesAsync(eventData, result, cancellationToken);
     }
 }
