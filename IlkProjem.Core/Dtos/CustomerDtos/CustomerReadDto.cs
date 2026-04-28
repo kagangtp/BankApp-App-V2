@@ -21,4 +21,6 @@ public class CustomerReadDto
     [ExcelIgnore]
     public string? ProfileImagePath { get; set; }
     public DateTime? BirthDate { get; set; }
+    public bool IsActive { get; set; }
+    public bool IsDeleted { get; set; }
 }

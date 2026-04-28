@@ -16,7 +16,7 @@ public class UserService : IUserService
 
     public async Task<IEnumerable<UserDto>> GetAllUsersAsync(CancellationToken ct = default)
     {
-        var users = await _userRepository.GetAllAsync(ct);
+        var users = await _userRepository.ListAllAsync(ct);
         return users.Select(u => new UserDto
         {
             Id = u.Id,
@@ -54,8 +54,7 @@ public class UserService : IUserService
         user.Email = userUpdateDto.Email;
         user.Role = userUpdateDto.Role;
 
-        _userRepository.Update(user);
-        await _userRepository.SaveChangesAsync(ct);
+        await _userRepository.UpdateAsync(user, ct);
 
         return new UserDto
         {
@@ -69,11 +68,7 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteUserAsync(int id, CancellationToken ct = default)
     {
-        var user = await _userRepository.GetByIdAsync(id, ct);
-        if (user == null) return false;
-
-        _userRepository.Delete(user);
-        return await _userRepository.SaveChangesAsync(ct);
+        return await _userRepository.DeleteAsync(id, ct);
     }
 
     public async Task<UserDto> PromoteUserAsync(int id, CancellationToken ct = default)
@@ -92,8 +87,7 @@ public class UserService : IUserService
             user.Role = IlkProjem.Core.Constants.Roles.Admin;
         }
 
-        _userRepository.Update(user);
-        await _userRepository.SaveChangesAsync(ct);
+        await _userRepository.UpdateAsync(user, ct);
 
         return new UserDto
         {
@@ -121,8 +115,7 @@ public class UserService : IUserService
             user.Role = IlkProjem.Core.Constants.Roles.Staff;
         }
 
-        _userRepository.Update(user);
-        await _userRepository.SaveChangesAsync(ct);
+        await _userRepository.UpdateAsync(user, ct);
 
         return new UserDto
         {

@@ -5,11 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace IlkProjem.DAL.Repositories;
 
-public class RefreshTokenRepository : IRefreshTokenRepository
+public class RefreshTokenRepository : GenericRepository<RefreshToken>, IRefreshTokenRepository
 {
-    private readonly AppDbContext _context;
-
-    public RefreshTokenRepository(AppDbContext context) => _context = context;
+    public RefreshTokenRepository(AppDbContext context) : base(context) { }
 
     public async Task<RefreshToken?> GetByTokenAsync(string hashedToken, CancellationToken ct = default)
     {
@@ -17,10 +15,4 @@ public class RefreshTokenRepository : IRefreshTokenRepository
             .Include(rt => rt.User)
             .FirstOrDefaultAsync(rt => rt.Token == hashedToken, ct);
     }
-
-    public async Task AddAsync(RefreshToken refreshToken, CancellationToken ct = default) =>
-        await _context.RefreshTokens.AddAsync(refreshToken, ct);
-
-    public async Task<bool> SaveChangesAsync(CancellationToken ct = default) =>
-        await _context.SaveChangesAsync(ct) > 0;
 }

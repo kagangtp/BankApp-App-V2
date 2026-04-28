@@ -62,7 +62,6 @@ public class AuthService : IAuthService
         };
 
         await _refreshTokenRepository.AddAsync(refreshTokenEntity, ct);
-        await _refreshTokenRepository.SaveChangesAsync(ct);
 
         var responseDto = new LoginResponseDto
         {
@@ -96,7 +95,6 @@ public class AuthService : IAuthService
         };
 
         await _userRepository.AddAsync(newUser, ct);
-        await _userRepository.SaveChangesAsync(ct);
 
         return new SuccessResult(_localizer["RegisterSuccess"]);
     }
@@ -132,7 +130,6 @@ public class AuthService : IAuthService
         };
 
         await _refreshTokenRepository.AddAsync(newRefreshTokenEntity, ct);
-        await _refreshTokenRepository.SaveChangesAsync(ct);
 
         // Yeni access token
         var expiresAt = DateTime.UtcNow.AddMinutes(GetAccessTokenExpiryMinutes());
@@ -160,7 +157,7 @@ public class AuthService : IAuthService
         }
 
         existingToken.RevokedAt = DateTime.UtcNow;
-        await _refreshTokenRepository.SaveChangesAsync(ct);
+        await _refreshTokenRepository.UpdateAsync(existingToken, ct);
 
         return new SuccessResult("Token iptal edildi.");
     }

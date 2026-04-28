@@ -99,7 +99,6 @@ public class FilesService : IFilesService
         };
 
         await _fileRepository.AddAsync(fileEntity);
-        await _fileRepository.SaveChangesAsync();
 
         return fileEntity;
     }
@@ -134,8 +133,7 @@ public class FilesService : IFilesService
             }
         }
 
-        _fileRepository.Delete(fileRecord);
-        await _fileRepository.SaveChangesAsync();
+        await _fileRepository.DeleteAsync(fileId);
 
         return true;
     }
@@ -150,8 +148,7 @@ public class FilesService : IFilesService
         var existingOwnerFiles = await _fileRepository.GetByOwnerAsync(assignDto.OwnerType, assignDto.OwnerId);
         if (existingOwnerFiles.Any(f => f.FileHash == file.FileHash && f.Id != file.Id))
         {
-            _fileRepository.Delete(file);
-            await _fileRepository.SaveChangesAsync();
+            await _fileRepository.DeleteAsync(fileId);
             return true; // İstek başarılı varsayılır ama 2. bir kopyası eklenmez, varolan resim durur.
         }
 
@@ -165,8 +162,7 @@ public class FilesService : IFilesService
                 if (customer.ProfileImage != null && customer.ProfileImage.FileHash == file.FileHash && customer.ProfileImage.Id != file.Id)
                 {
                     // Yeni yüklemeyi çöpe at, varolan kalsın!
-                    _fileRepository.Delete(file);
-                    await _fileRepository.SaveChangesAsync();
+                    await _fileRepository.DeleteAsync(fileId);
                     return true;
                 }
                 
@@ -185,8 +181,6 @@ public class FilesService : IFilesService
                     await DeleteAsync(oldFileId.Value);
                 }
                 
-                await _fileRepository.SaveChangesAsync();
-
                 // --- CACHE INVALIDATION ---
                 // Müşteri verisi değiştiği için cache'i temizle
                 await _cache.RemoveAsync($"customer:{assignDto.OwnerId}");
@@ -201,8 +195,7 @@ public class FilesService : IFilesService
         file.OwnerId = assignDto.OwnerId;
         file.OwnerType = assignDto.OwnerType;
 
-        _fileRepository.Update(file);
-        await _fileRepository.SaveChangesAsync();
+        await _fileRepository.UpdateAsync(file);
         return true;
     }
 

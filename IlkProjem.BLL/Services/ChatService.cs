@@ -40,7 +40,6 @@ public class ChatService : IChatService
         };
 
         await _chatRepo.AddAsync(message, ct);
-        await _chatRepo.SaveChangesAsync(ct);
 
         return new ChatMessageDto
         {

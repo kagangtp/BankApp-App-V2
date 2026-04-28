@@ -6,6 +6,7 @@ using IlkProjem.Core.Dtos.AiChatDtos;
 using IlkProjem.Core.Dtos.CarDtos;
 using IlkProjem.Core.Dtos.CustomerDtos;
 using IlkProjem.Core.Dtos.HouseDtos;
+using IlkProjem.Core.Dtos.KnowledgeDtos;
 using IlkProjem.Core.Dtos.SpecificationDtos;
 using IlkProjem.Core.Interfaces;
 using IlkProjem.Core.Models;
@@ -24,6 +25,7 @@ public class AiChatService : IAiChatService
     private readonly ICustomerService _customerService;
     private readonly ICarService _carService;
     private readonly IHouseService _houseService;
+    private readonly IKnowledgeService _knowledgeService;
 
     private readonly string _apiKey;
     private readonly string _model;
@@ -35,7 +37,8 @@ public class AiChatService : IAiChatService
         ILogger<AiChatService> logger,
         ICustomerService customerService,
         ICarService carService,
-        IHouseService houseService)
+        IHouseService houseService,
+        IKnowledgeService knowledgeService)
     {
         _repo = repo;
         _httpClient = httpClient;
@@ -44,6 +47,7 @@ public class AiChatService : IAiChatService
         _customerService = customerService;
         _carService = carService;
         _houseService = houseService;
+        _knowledgeService = knowledgeService;
         _apiKey = _config["GeminiAI:ApiKey"] ?? "";
         _model = _config["GeminiAI:Model"] ?? "gemini-1.5-flash";
     }
@@ -175,14 +179,33 @@ Verileri düzgün biçimlendir. Kısa ve profesyonel ol.";
     {
         var userMsg = new AiChatMessage { UserId = userId, Role = "user", Content = message, SentAt = DateTime.UtcNow };
         await _repo.AddAsync(userMsg, ct);
-        await _repo.SaveChangesAsync(ct);
 
-        var history = await _repo.GetUserHistoryAsync(userId, 6, ct);
+        var history = await _repo.GetUserHistoryAsync(userId, 20, ct);
+
+        // RAG: Bilgi tabanından ilgili bağlamı getir
+        string ragContext = "";
+        try
+        {
+            var ragResults = await _knowledgeService.SearchAsync(message, topK: 3, ct);
+            if (ragResults.Count > 0)
+            {
+                ragContext = "\n\n--- Bilgi Tabanı / Knowledge Base ---\n" +
+                    string.Join("\n\n", ragResults
+                        .Where(r => r.Score > 0.5) // Sadece yeterince ilgili sonuçlar
+                        .Select(r => $"[{r.Category} | {r.DocumentTitle}]\n{r.Content}"));
+                _logger.LogInformation("RAG: {Count} ilgili chunk bulundu (kullanıcı: {UserId})", 
+                    ragResults.Count(r => r.Score > 0.5), userId);
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex, "RAG arama başarısız — fonksiyon çağrısı ile devam ediliyor.");
+        }
 
         string aiResponse;
         try
         {
-            aiResponse = await RunFunctionCallingLoopAsync(history, ct);
+            aiResponse = await RunFunctionCallingLoopAsync(history, ragContext, ct);
         }
         catch (Exception ex)
         {
@@ -192,7 +215,6 @@ Verileri düzgün biçimlendir. Kısa ve profesyonel ol.";
 
         var assistantMsg = new AiChatMessage { UserId = userId, Role = "assistant", Content = aiResponse, SentAt = DateTime.UtcNow };
         await _repo.AddAsync(assistantMsg, ct);
-        await _repo.SaveChangesAsync(ct);
 
         return new AiChatMessageDto
         {
@@ -217,7 +239,7 @@ Verileri düzgün biçimlendir. Kısa ve profesyonel ol.";
 
     // ── Function Calling Loop ────────────────────────────────────────────────
 
-    private async Task<string> RunFunctionCallingLoopAsync(List<AiChatMessage> history, CancellationToken ct)
+    private async Task<string> RunFunctionCallingLoopAsync(List<AiChatMessage> history, string ragContext, CancellationToken ct)
     {
         var url = $"https://generativelanguage.googleapis.com/v1beta/models/{_model}:generateContent?key={_apiKey}";
 
@@ -228,13 +250,16 @@ Verileri düzgün biçimlendir. Kısa ve profesyonel ol.";
             parts = new[] { new { text = m.Content ?? "" } }
         }));
 
+        // RAG bağlamını sistem prompt'una ekle
+        var dynamicSystemPrompt = SystemPrompt + ragContext;
+
         // Gemini, birden fazla fonksiyon çağırabilir — döngüyle takip ediyoruz
         const int maxTurns = 6;
         for (int turn = 0; turn < maxTurns; turn++)
         {
             var requestBody = new
             {
-                systemInstruction = new { parts = new[] { new { text = SystemPrompt } } },
+                systemInstruction = new { parts = new[] { new { text = dynamicSystemPrompt } } },
                 contents,
                 tools             = new[] { new { function_declarations = FunctionDeclarations } },
                 generationConfig  = new { temperature = 0.3, maxOutputTokens = 2048 }

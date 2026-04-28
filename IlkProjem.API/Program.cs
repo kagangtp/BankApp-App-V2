@@ -216,6 +216,7 @@ builder.Services.AddRateLimiter(options =>
 
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 // DI Registrations
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -237,9 +238,13 @@ builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
 builder.Services.AddScoped<IChatMessageRepository, ChatMessageRepository>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IAiChatMessageRepository, AiChatMessageRepository>();
-// AiChatService: HttpClient + ICustomerService + ICarService + IHouseService inject alır.
-// ICustomerService/ICarService/IHouseService zaten üstte Scoped olarak kayıtlı — ek kayıt gerekmez.
+// AiChatService: HttpClient + ICustomerService + ICarService + IHouseService + IKnowledgeService inject alır.
 builder.Services.AddHttpClient<IAiChatService, AiChatService>();
+
+// --- RAG SERVİSLERİ ---
+builder.Services.AddScoped<IKnowledgeRepository, KnowledgeRepository>();
+builder.Services.AddHttpClient<IEmbeddingService, EmbeddingService>();
+builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 
 // --- MCP SERVER ---
 // Stateless = true → Session yönetimi yok, her request bağımsız çalışır.
@@ -348,6 +353,8 @@ using (var scope = app.Services.CreateScope())
                 context.Customers.AddRange(CustomerSeeder.GetFakeCustomers(50));
                 context.SaveChanges();
             }
+
+            // RAG Bilgi Tabanı Seed işlemi kaldırıldı (Mock data iptal edildi)
         }
         catch (Exception ex) {
             Console.WriteLine($"[MIGRATION ERROR]: {ex.Message}");
