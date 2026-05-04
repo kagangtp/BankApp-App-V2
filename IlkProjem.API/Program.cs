@@ -246,13 +246,6 @@ builder.Services.AddScoped<IKnowledgeRepository, KnowledgeRepository>();
 builder.Services.AddHttpClient<IEmbeddingService, EmbeddingService>();
 builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 
-// --- MCP SERVER ---
-// Stateless = true → Session yönetimi yok, her request bağımsız çalışır.
-// MCP Inspector, Claude Desktop gibi araçlarla çalışmak için gereklidir.
-builder.Services.AddMcpServer()
-    .WithHttpTransport(options => { options.Stateless = true; })
-    .WithToolsFromAssembly(typeof(Program).Assembly);
-
 // --- 5b. GCP STORAGE CLIENT (Singleton) ---
 builder.Services.AddSingleton<StorageClient>(sp =>
 {
@@ -315,7 +308,6 @@ var app = builder.Build();
 var locOptions = app.Services.GetRequiredService<IOptions<RequestLocalizationOptions>>();
 app.UseRequestLocalization(locOptions.Value);
 app.UseMiddleware<ExceptionHandlerMiddleware>();
-app.UseMiddleware<McpAuthMiddleware>(); 
 
 if (app.Environment.IsDevelopment())
 {
@@ -337,7 +329,6 @@ if (!app.Environment.IsDevelopment())
 
 app.MapHub<IlkProjem.Core.Hubs.NotificationHub>("/notification-hub");
 app.MapControllers().RequireRateLimiting("PerUser");
-app.MapMcp("/mcp");   
 
 // --- 9. DATABASE MIGRATION & SEED DATA ---
 using (var scope = app.Services.CreateScope())
