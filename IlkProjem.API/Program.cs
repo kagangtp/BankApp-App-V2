@@ -246,6 +246,11 @@ builder.Services.AddScoped<IKnowledgeRepository, KnowledgeRepository>();
 builder.Services.AddHttpClient<IEmbeddingService, EmbeddingService>();
 builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 
+// --- WORKFLOW SERVİSLERİ ---
+builder.Services.AddScoped<IWorkflowRepository, WorkflowRepository>();
+builder.Services.AddScoped<IWorkflowService, WorkflowService>();
+builder.Services.AddScoped<IBusinessActionService, BusinessActionService>();
+
 // --- 5b. GCP STORAGE CLIENT (Singleton) ---
 builder.Services.AddSingleton<StorageClient>(sp =>
 {

@@ -32,4 +32,11 @@ public static class Permissions
     {
         public const string Manage = "System.Manage";
     }
+
+    public static class Workflows
+    {
+        public const string View = "Workflows.View";
+        public const string Create = "Workflows.Create";
+        public const string Approve = "Workflows.Approve";
+    }
 }

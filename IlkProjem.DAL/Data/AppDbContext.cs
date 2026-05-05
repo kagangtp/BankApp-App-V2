@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using IlkProjem.Core.Models;
 using IlkProjem.Core.Interfaces;
+using IlkProjem.Core.Enums;
 namespace IlkProjem.DAL.Data;
 
 public class AppDbContext : DbContext
@@ -24,6 +25,13 @@ public class AppDbContext : DbContext
     public DbSet<AiChatMessage> AiChatMessages => Set<AiChatMessage>();
     public DbSet<KnowledgeDocument> KnowledgeDocuments => Set<KnowledgeDocument>();
     public DbSet<KnowledgeChunk> KnowledgeChunks => Set<KnowledgeChunk>();
+
+    // --- WORKFLOW SYSTEM ---
+    public DbSet<Workflow> Workflows => Set<Workflow>();
+    public DbSet<WorkflowStep> WorkflowSteps => Set<WorkflowStep>();
+    public DbSet<WorkflowAction> WorkflowActions => Set<WorkflowAction>();
+    public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
+    public DbSet<WorkflowHistory> WorkflowHistory => Set<WorkflowHistory>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -83,6 +91,84 @@ public class AppDbContext : DbContext
                   .HasForeignKey(c => c.DocumentId)
                   .OnDelete(DeleteBehavior.Cascade);
             entity.HasIndex(e => e.DocumentId);
+        });
+
+        // --- WORKFLOW SYSTEM ---
+        modelBuilder.Entity<Workflow>(entity =>
+        {
+            entity.ToTable("Workflows");
+            entity.HasIndex(e => e.WorkflowNo).IsUnique();
+            entity.HasIndex(e => e.Status);
+            entity.HasIndex(e => e.RequestedByUserId);
+            entity.HasIndex(e => e.AssignedToUserId);
+            entity.HasIndex(e => e.CreatedAt);
+            entity.Property(e => e.Data).HasColumnType("jsonb");
+            entity.Property(e => e.Status).HasConversion<string>();
+            entity.Property(e => e.Type).HasConversion<string>();
+
+            entity.HasOne(w => w.RequestedByUser)
+                  .WithMany()
+                  .HasForeignKey(w => w.RequestedByUserId)
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(w => w.AssignedToUser)
+                  .WithMany()
+                  .HasForeignKey(w => w.AssignedToUserId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<WorkflowStep>(entity =>
+        {
+            entity.ToTable("WorkflowSteps");
+            entity.Property(e => e.Status).HasConversion<string>();
+            entity.HasOne(s => s.Workflow)
+                  .WithMany(w => w.Steps)
+                  .HasForeignKey(s => s.WorkflowId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(s => s.AssignedToUser)
+                  .WithMany()
+                  .HasForeignKey(s => s.AssignedToUserId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<WorkflowAction>(entity =>
+        {
+            entity.ToTable("WorkflowActions");
+            entity.Property(e => e.Action).HasConversion<string>();
+            entity.HasIndex(e => e.WorkflowId);
+            entity.HasOne(a => a.Workflow)
+                  .WithMany(w => w.Actions)
+                  .HasForeignKey(a => a.WorkflowId)
+                  .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(a => a.ByUser)
+                  .WithMany()
+                  .HasForeignKey(a => a.ByUserId)
+                  .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<AuditLog>(entity =>
+        {
+            entity.ToTable("AuditLogs");
+            entity.HasIndex(e => e.WorkflowId);
+            entity.HasIndex(e => e.CreatedAt);
+            entity.Property(e => e.OldValue).HasColumnType("jsonb");
+            entity.Property(e => e.NewValue).HasColumnType("jsonb");
+            entity.HasOne(a => a.Workflow)
+                  .WithMany()
+                  .HasForeignKey(a => a.WorkflowId)
+                  .OnDelete(DeleteBehavior.SetNull);
+        });
+
+        modelBuilder.Entity<WorkflowHistory>(entity =>
+        {
+            entity.ToTable("WorkflowHistory");
+            entity.HasIndex(e => e.WorkflowId);
+            entity.Property(e => e.FromStatus).HasConversion<string>();
+            entity.Property(e => e.ToStatus).HasConversion<string>();
+            entity.HasOne(h => h.Workflow)
+                  .WithMany(w => w.History)
+                  .HasForeignKey(h => h.WorkflowId)
+                  .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

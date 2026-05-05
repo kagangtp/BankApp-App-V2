@@ -11,17 +11,20 @@ public static class RolePermissions
             Permissions.Customers.View, Permissions.Customers.Create, Permissions.Customers.Edit, Permissions.Customers.Delete,
             Permissions.Users.View, Permissions.Users.Create, Permissions.Users.Edit, Permissions.Users.Delete,
             Permissions.Files.View, Permissions.Files.Upload, Permissions.Files.Delete,
-            Permissions.System.Manage
+            Permissions.System.Manage,
+            Permissions.Workflows.View, Permissions.Workflows.Create, Permissions.Workflows.Approve
         },
         [Roles.Manager] = new List<string>
         {
             Permissions.Customers.View, Permissions.Customers.Create, Permissions.Customers.Edit,
-            Permissions.Files.View, Permissions.Files.Upload
+            Permissions.Files.View, Permissions.Files.Upload,
+            Permissions.Workflows.View, Permissions.Workflows.Create, Permissions.Workflows.Approve
         },
         [Roles.Staff] = new List<string>
         {
             Permissions.Customers.View,
-            Permissions.Files.View, Permissions.Files.Upload
+            Permissions.Files.View, Permissions.Files.Upload,
+            Permissions.Workflows.View, Permissions.Workflows.Create
         },
         [Roles.Guest] = new List<string>
         {
